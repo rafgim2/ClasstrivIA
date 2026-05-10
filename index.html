@@ -21,9 +21,7 @@
       --orange: #fb923c;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -127,13 +125,8 @@
     }
 
     @media (max-width: 900px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-      .topbar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      .layout { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: flex-start; }
     }
 
     .card {
@@ -150,13 +143,9 @@
       display: none;
     }
 
-    .screen.active {
-      display: block;
-    }
+    .screen.active { display: block; }
 
-    h1, h2, h3, p {
-      margin-top: 0;
-    }
+    h1, h2, h3, p { margin-top: 0; }
 
     h1 {
       font-size: clamp(36px, 6vw, 72px);
@@ -209,14 +198,10 @@
       margin: 22px 0;
     }
 
-    .two {
-      grid-template-columns: 1fr 220px;
-    }
+    .two { grid-template-columns: 1fr 220px; }
 
     @media (max-width: 700px) {
-      .two {
-        grid-template-columns: 1fr;
-      }
+      .two { grid-template-columns: 1fr; }
     }
 
     .btn {
@@ -234,9 +219,7 @@
       width: 100%;
     }
 
-    .btn:hover {
-      filter: brightness(1.06);
-    }
+    .btn:hover { filter: brightness(1.06); }
 
     .btn:active {
       transform: translateY(8px);
@@ -256,6 +239,13 @@
     .btn.danger {
       background: linear-gradient(135deg, #ef4444, #dc2626);
       box-shadow: 0 12px 0 #b91c1c, 0 20px 32px rgba(0,0,0,0.22);
+    }
+
+    .btn.small {
+      font-size: 18px;
+      padding: 13px 16px;
+      border-radius: 18px;
+      box-shadow: 0 8px 0 rgba(0,0,0,0.22), 0 14px 22px rgba(0,0,0,0.15);
     }
 
     .btn:disabled {
@@ -293,9 +283,7 @@
       margin: 0 auto 20px;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .players-list, .ranking-list {
       display: grid;
@@ -365,9 +353,7 @@
       background: #111827;
     }
 
-    .meta-badge.topic {
-      background: var(--purple);
-    }
+    .meta-badge.topic { background: var(--purple); }
 
     .meta-badge.timer {
       background: var(--red);
@@ -399,9 +385,7 @@
     }
 
     @media (max-width: 760px) {
-      .answers {
-        grid-template-columns: 1fr;
-      }
+      .answers { grid-template-columns: 1fr; }
     }
 
     .answer {
@@ -419,9 +403,7 @@
       transition: transform 0.08s, filter 0.18s, opacity 0.2s;
     }
 
-    .answer:hover {
-      filter: brightness(1.08);
-    }
+    .answer:hover { filter: brightness(1.08); }
 
     .answer:active {
       transform: translateY(8px);
@@ -458,9 +440,7 @@
       display: none;
     }
 
-    .feedback.show {
-      display: block;
-    }
+    .feedback.show { display: block; }
 
     .feedback.good {
       background: #dcfce7;
@@ -491,9 +471,7 @@
       margin-top: 12px;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
   </style>
 </head>
 
@@ -601,14 +579,16 @@
       </section>
 
       <aside class="side-card">
-        <h3>🏆 Ranking</h3>
+        <button class="btn danger small hidden" id="cancelGameBtn">Cancelar partida 🛑</button>
+
+        <h3 style="margin-top: 18px;">🏆 Ranking</h3>
         <div class="ranking-list" id="rankingList"></div>
 
         <h3 style="margin-top: 24px;">👥 Jugadores</h3>
         <div class="players-list" id="playersList"></div>
 
         <p class="small-note">
-          Sala fija: <strong>aula</strong>. Para una primera versión de clase es lo más simple.
+          Sala fija: <strong>aula</strong>. La música solo suena en el dispositivo que crea la partida.
         </p>
       </aside>
     </div>
@@ -616,28 +596,29 @@
 
   <script type="module">
     /************************************************************
-     * 1) PEGA AQUÍ TU CONFIGURACIÓN WEB DE FIREBASE
-     * Firebase Console → Project settings → General → Your apps → Web app
+     * CONFIGURACIÓN WEB DE FIREBASE
      ************************************************************/
     const firebaseConfig = {
-  apiKey: "AIzaSyD5EAMg-0p54f8bPq8SVdZ_ePg5Xso3cmg",
-  authDomain: "arm1-acbba.firebaseapp.com",
-  projectId: "arm1-acbba",
-  storageBucket: "arm1-acbba.firebasestorage.app",
-  messagingSenderId: "408825932019",
-  appId: "1:408825932019:web:10f2079b590b4c9ca3af86",
-  measurementId: "G-S78TM6PVRL"
-};
+      apiKey: "AIzaSyD5EAMg-0p54f8bPq8SVdZ_ePg5Xso3cmg",
+      authDomain: "arm1-acbba.firebaseapp.com",
+      projectId: "arm1-acbba",
+      storageBucket: "arm1-acbba.firebasestorage.app",
+      messagingSenderId: "408825932019",
+      appId: "1:408825932019:web:10f2079b590b4c9ca3af86",
+      measurementId: "G-S78TM6PVRL"
+    };
 
     /************************************************************
-     * 2) CONFIGURACIÓN BÁSICA
+     * CONFIGURACIÓN BÁSICA
      ************************************************************/
     const ROOM_ID = "aula";
     const FUNCTIONS_REGION = "europe-west1";
     const QUESTION_SECONDS = 20;
+    const FINISHED_CLEANUP_DELAY_MS = 30000;
+    const AUTO_NEXT_DELAY_MS = 1500;
 
     /************************************************************
-     * 3) IMPORTS DE FIREBASE
+     * IMPORTS DE FIREBASE
      ************************************************************/
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
@@ -665,7 +646,6 @@
     const roomRef = doc(db, "trivialRooms", ROOM_ID);
     const playersRef = collection(db, "trivialRooms", ROOM_ID, "players");
 
-    const clientId = getOrCreateLocalId("trivial_client_id");
     let playerId = localStorage.getItem("trivial_player_id") || null;
     let playerName = localStorage.getItem("trivial_player_name") || "";
     let isHost = false;
@@ -673,11 +653,13 @@
     let players = [];
     let myPlayer = null;
     let timerInterval = null;
+    let autoAdvanceTimeout = null;
+    let autoAdvanceQuestionKey = "";
+    let cleanupScheduled = false;
     let unsubscribeRoom = null;
     let unsubscribePlayers = null;
-    let cleanupScheduled = false;
 
-    // Música de fondo: solo sonará en el dispositivo que crea/controla la partida.
+    // Música de fondo: solo se intenta reproducir en el dispositivo host.
     const hostMusic = new Audio("music.mp3");
     hostMusic.loop = true;
     hostMusic.volume = 0.28;
@@ -704,6 +686,7 @@
     $("startGameBtn").addEventListener("click", startGame);
     $("nextQuestionBtn").addEventListener("click", nextQuestion);
     $("resetGameBtn").addEventListener("click", resetGame);
+    $("cancelGameBtn").addEventListener("click", cancelGame);
 
     $("playerName").addEventListener("keydown", (ev) => {
       if (ev.key === "Enter") joinGame();
@@ -722,16 +705,7 @@
     async function ensureRoomExists() {
       const snap = await getDoc(roomRef);
       if (!snap.exists()) {
-        await setDoc(roomRef, {
-          status: "setup",
-          topic: "",
-          questionCount: 10,
-          questions: [],
-          currentQuestion: 0,
-          hostId: "",
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
+        await resetRoomDocument();
       }
     }
 
@@ -744,6 +718,7 @@
         isHost = Boolean(playerId && room.hostId === playerId);
         updateRoomStatus();
         renderByStatus();
+        maybeAutoAdvanceQuestion();
       });
     }
 
@@ -756,6 +731,7 @@
         renderPlayers();
         renderRanking();
         renderByStatus();
+        maybeAutoAdvanceQuestion();
       });
     }
 
@@ -778,7 +754,7 @@
       }
 
       const currentRoom = (await getDoc(roomRef)).data();
-      const shouldBecomeHost = !currentRoom.hostId;
+      const shouldBecomeHost = !currentRoom?.hostId;
 
       await setDoc(doc(playersRef, playerId), {
         name: playerName,
@@ -818,6 +794,7 @@
         status: "waiting",
         questions: [],
         currentQuestion: 0,
+        generationId: "",
         updatedAt: serverTimestamp()
       });
     }
@@ -829,28 +806,37 @@
         return;
       }
 
-      // Al pulsar el botón, el navegador permite iniciar audio.
-      // Solo lo hace el host/creador de la partida.
-      startHostMusic();
+      const generationId = crypto.randomUUID();
 
       try {
+        startHostMusic();
+
         await updateDoc(roomRef, {
           status: "loading",
+          generationId,
           updatedAt: serverTimestamp()
         });
 
-        const generateQuestions = httpsCallable(functions, "generateQuestions");
-        const result = await generateQuestions({
+        const requestedCount = Number(room.questionCount || 10);
+        const questions = await generateQuestionsWithoutRepeats({
           topic: room.topic,
-          questionCount: room.questionCount,
+          questionCount: requestedCount,
           level: "Primaria",
           language: "es"
         });
 
-        const questions = normalizeQuestions(result.data?.questions);
-
         if (!questions.length) {
           throw new Error("La función no ha devuelto preguntas válidas.");
+        }
+
+        if (questions.length < requestedCount) {
+          alert(`La IA ha devuelto ${questions.length} preguntas únicas. Continuamos sin repetidas.`);
+        }
+
+        const latestRoom = (await getDoc(roomRef)).data();
+        if (!latestRoom || latestRoom.status !== "loading" || latestRoom.generationId !== generationId) {
+          stopHostMusic();
+          return;
         }
 
         await updateDoc(roomRef, {
@@ -863,12 +849,34 @@
       } catch (error) {
         console.error(error);
         stopHostMusic();
-        alert("No se han podido generar las preguntas. Revisa que la Firebase Function generateQuestions esté desplegada y que la región coincida.");
+        alert("No se han podido generar las preguntas. Revisa la Firebase Function generateQuestions, la región y los registros de Functions.");
         await updateDoc(roomRef, {
           status: "waiting",
+          generationId: "",
           updatedAt: serverTimestamp()
         });
       }
+    }
+
+    async function generateQuestionsWithoutRepeats(settings) {
+      const generateQuestions = httpsCallable(functions, "generateQuestions");
+      let bestQuestions = [];
+
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const result = await generateQuestions(settings);
+        const normalized = normalizeQuestions(result.data?.questions);
+        const unique = removeRepeatedQuestions(normalized);
+
+        if (unique.length > bestQuestions.length) {
+          bestQuestions = unique;
+        }
+
+        if (unique.length >= settings.questionCount) {
+          return unique.slice(0, settings.questionCount);
+        }
+      }
+
+      return bestQuestions.slice(0, settings.questionCount);
     }
 
     /************************************************************
@@ -957,6 +965,8 @@
     async function nextQuestion() {
       if (!isHost || room.status !== "playing") return;
 
+      clearAutoAdvance();
+
       const next = (room.currentQuestion || 0) + 1;
       const total = room.questions?.length || 0;
 
@@ -964,6 +974,7 @@
         stopHostMusic();
         await updateDoc(roomRef, {
           status: "finished",
+          generationId: "",
           finishedAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
@@ -976,28 +987,51 @@
       }
     }
 
+    function maybeAutoAdvanceQuestion() {
+      if (!isHost || !room || room.status !== "playing") return;
+
+      const index = room.currentQuestion || 0;
+      const questions = room.questions || [];
+      if (!questions[index] || players.length === 0) return;
+
+      const answerKey = String(index);
+      const allAnswered = players.every(player => Boolean(player.answers?.[answerKey]));
+      const currentKey = `${room.generationId || "game"}_${index}`;
+
+      if (!allAnswered) {
+        if (autoAdvanceQuestionKey === currentKey) clearAutoAdvance();
+        return;
+      }
+
+      if (autoAdvanceQuestionKey === currentKey && autoAdvanceTimeout) return;
+
+      autoAdvanceQuestionKey = currentKey;
+      autoAdvanceTimeout = setTimeout(() => {
+        autoAdvanceTimeout = null;
+        nextQuestion();
+      }, AUTO_NEXT_DELAY_MS);
+    }
+
+    function clearAutoAdvance() {
+      if (autoAdvanceTimeout) {
+        clearTimeout(autoAdvanceTimeout);
+        autoAdvanceTimeout = null;
+      }
+      autoAdvanceQuestionKey = "";
+    }
+
     async function resetGame() {
       if (!isHost) return;
+      await cleanupAndResetRoom({ clearLocalHost: true });
+    }
 
-      stopHostMusic();
-      cleanupScheduled = false;
+    async function cancelGame() {
+      if (!isHost) return;
 
-      const deletes = players.map(p => deleteDoc(doc(playersRef, p.id)));
-      await Promise.all(deletes);
+      const ok = confirm("¿Seguro que quieres cancelar la partida? Se borrarán solo los datos de esta sala del trivial.");
+      if (!ok) return;
 
-      playerId = null;
-      localStorage.removeItem("trivial_player_id");
-
-      await setDoc(roomRef, {
-        status: "setup",
-        topic: "",
-        questionCount: 10,
-        questions: [],
-        currentQuestion: 0,
-        hostId: "",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
+      await cleanupAndResetRoom({ clearLocalHost: true });
     }
 
     /************************************************************
@@ -1006,12 +1040,19 @@
     function renderByStatus() {
       if (!room) return;
 
+      updateCancelButton();
+
       if (!playerId || !myPlayer) {
+        stopHostMusic();
         showScreen("join");
         return;
       }
 
       if (room.status === "setup") {
+        stopHostMusic();
+        clearAutoAdvance();
+        cleanupScheduled = false;
+
         if (isHost) {
           showScreen("setup");
           $("topicInput").value = room.topic || "";
@@ -1024,14 +1065,13 @@
 
       if (room.status === "waiting") {
         stopHostMusic();
-        cleanupScheduled = false;
+        clearAutoAdvance();
         showScreen("waiting");
         $("waitingText").textContent = `Tema: ${room.topic || "sin tema"}`;
         $("startGameBtn").classList.toggle("hidden", !isHost);
       }
 
       if (room.status === "loading") {
-        if (isHost) startHostMusic();
         showScreen("loading");
       }
 
@@ -1043,12 +1083,15 @@
 
       if (room.status === "finished") {
         stopHostMusic();
+        clearAutoAdvance();
         showScreen("finished");
         const winner = players[0];
         $("winnerName").textContent = winner ? `🏆 ${winner.name}` : "🏆";
         $("resetGameBtn").classList.toggle("hidden", !isHost);
         scheduleAutoCleanupAfterFinished();
       }
+
+      updateCancelButton();
     }
 
     function showScreen(name) {
@@ -1065,6 +1108,11 @@
         finished: "Partida terminada"
       };
       $("roomStatus").textContent = `${labels[room.status] || "Sala"} · ${players.length} jugadores`;
+    }
+
+    function updateCancelButton() {
+      const canCancel = Boolean(isHost && playerId && myPlayer && room && ["setup", "waiting", "loading", "playing", "finished"].includes(room.status));
+      $("cancelGameBtn").classList.toggle("hidden", !canCancel);
     }
 
     function renderPlayers() {
@@ -1110,14 +1158,39 @@
     }
 
     /************************************************************
+     * TEMPORIZADOR Y PUNTUACIÓN
+     ************************************************************/
+    function startTimer() {
+      clearInterval(timerInterval);
+      tickTimer();
+      timerInterval = setInterval(tickTimer, 250);
+    }
+
+    function tickTimer() {
+      const elapsed = getElapsedSeconds();
+      const remaining = Math.max(0, Math.ceil(QUESTION_SECONDS - elapsed));
+      $("timerBadge").textContent = String(remaining);
+    }
+
+    function getElapsedSeconds() {
+      const started = room?.questionStartedAt;
+      if (!started?.toMillis) return 0;
+      return Math.max(0, (Date.now() - started.toMillis()) / 1000);
+    }
+
+    function calculatePoints(seconds) {
+      const ratio = Math.max(0, (QUESTION_SECONDS - seconds) / QUESTION_SECONDS);
+      return Math.max(100, Math.round(1000 * ratio));
+    }
+
+    /************************************************************
      * AUDIO
      ************************************************************/
     function startHostMusic() {
       if (!isHost) return;
 
       hostMusic.play().catch(() => {
-        // Algunos navegadores bloquean audio hasta que haya una interacción.
-        // No mostramos error para no interrumpir la partida.
+        // Algunos navegadores bloquean audio hasta que haya interacción directa.
       });
     }
 
@@ -1146,7 +1219,7 @@
 
         setTimeout(() => ctx.close(), 900);
       } catch (error) {
-        // Si el navegador no permite Web Audio, simplemente no suena.
+        // Si Web Audio no está disponible, simplemente no suena.
       }
     }
 
@@ -1169,67 +1242,52 @@
     }
 
     /************************************************************
-     * LIMPIEZA AUTOMÁTICA DE FIRESTORE
+     * LIMPIEZA DE FIRESTORE SOLO PARA ESTA APP
      ************************************************************/
+    async function cleanupAndResetRoom({ clearLocalHost = false } = {}) {
+      stopHostMusic();
+      clearAutoAdvance();
+      cleanupScheduled = false;
+
+      const deletes = players.map(p => deleteDoc(doc(playersRef, p.id)));
+      await Promise.all(deletes);
+
+      if (clearLocalHost) {
+        playerId = null;
+        localStorage.removeItem("trivial_player_id");
+      }
+
+      await resetRoomDocument();
+    }
+
+    async function resetRoomDocument() {
+      await setDoc(roomRef, {
+        status: "setup",
+        topic: "",
+        questionCount: 10,
+        questions: [],
+        currentQuestion: 0,
+        hostId: "",
+        generationId: "",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+
     function scheduleAutoCleanupAfterFinished() {
       if (!isHost || cleanupScheduled) return;
 
       cleanupScheduled = true;
 
-      // Dejamos unos segundos para que se vea el ganador y el ranking final.
       setTimeout(async () => {
         try {
           const latestRoom = (await getDoc(roomRef)).data();
           if (!latestRoom || latestRoom.status !== "finished") return;
-
-          const deletes = players.map(p => deleteDoc(doc(playersRef, p.id)));
-          await Promise.all(deletes);
-
-          playerId = null;
-          localStorage.removeItem("trivial_player_id");
-
-          await setDoc(roomRef, {
-            status: "setup",
-            topic: "",
-            questionCount: 10,
-            questions: [],
-            currentQuestion: 0,
-            hostId: "",
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          });
-
-          cleanupScheduled = false;
+          await cleanupAndResetRoom({ clearLocalHost: true });
         } catch (error) {
           console.error("Error limpiando Firestore:", error);
         }
-      }, 30000);
-    }
-
-    /************************************************************
-     * TEMPORIZADOR Y PUNTUACIÓN
-     ************************************************************/
-    function startTimer() {
-      clearInterval(timerInterval);
-      tickTimer();
-      timerInterval = setInterval(tickTimer, 250);
-    }
-
-    function tickTimer() {
-      const elapsed = getElapsedSeconds();
-      const remaining = Math.max(0, Math.ceil(QUESTION_SECONDS - elapsed));
-      $("timerBadge").textContent = String(remaining);
-    }
-
-    function getElapsedSeconds() {
-      const started = room?.questionStartedAt;
-      if (!started?.toMillis) return 0;
-      return Math.max(0, (Date.now() - started.toMillis()) / 1000);
-    }
-
-    function calculatePoints(seconds) {
-      const ratio = Math.max(0, (QUESTION_SECONDS - seconds) / QUESTION_SECONDS);
-      return Math.max(100, Math.round(1000 * ratio));
+      }, FINISHED_CLEANUP_DELAY_MS);
     }
 
     /************************************************************
@@ -1261,17 +1319,32 @@
         .filter(Boolean);
     }
 
-    function letter(index) {
-      return ["A", "B", "C", "D"][index] || "";
+    function removeRepeatedQuestions(questions) {
+      const seen = new Set();
+      const unique = [];
+
+      for (const question of questions) {
+        const key = normalizeTextForComparison(question.question);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        unique.push(question);
+      }
+
+      return unique;
     }
 
-    function getOrCreateLocalId(key) {
-      let value = localStorage.getItem(key);
-      if (!value) {
-        value = "client_" + crypto.randomUUID();
-        localStorage.setItem(key, value);
-      }
-      return value;
+    function normalizeTextForComparison(text) {
+      return String(text)
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9ñ]+/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function letter(index) {
+      return ["A", "B", "C", "D"][index] || "";
     }
 
     function showNotice(id, text) {
