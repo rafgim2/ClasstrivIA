@@ -1203,6 +1203,9 @@
         questions: [],
         currentQuestion: 0,
         generationId: "",
+        winnerId: "",
+        winnerName: "",
+        winnerScore: 0,
         updatedAt: serverTimestamp()
       });
     }
@@ -1225,6 +1228,9 @@
         await updateDoc(roomRef, {
           status: "loading",
           generationId,
+          winnerId: "",
+          winnerName: "",
+          winnerScore: 0,
           updatedAt: serverTimestamp()
         });
 
@@ -1383,9 +1389,18 @@
 
       if (next >= total) {
         stopHostMusic();
+
+        // Guardamos el ganador definitivo en Firestore en el momento exacto
+        // en que termina la partida. Así, si el ganador sale después,
+        // no se reasigna la copa al siguiente jugador del ranking.
+        const finalWinner = getCurrentWinner();
+
         await updateDoc(roomRef, {
           status: "finished",
           generationId: "",
+          winnerId: finalWinner?.id || "",
+          winnerName: finalWinner?.name || "",
+          winnerScore: finalWinner?.score || 0,
           finishedAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
@@ -1506,7 +1521,11 @@
         stopHostMusic();
         clearAutoAdvance();
         showScreen("finished");
-        const winner = players[0];
+
+        // Usamos el ganador guardado al terminar la partida, no players[0].
+        // Esto evita que, si el ganador abandona o desaparece de la lista,
+        // la animación de ganador salte al siguiente jugador.
+        const winner = getStoredWinner();
         $("winnerName").textContent = winner ? `🏆 ${winner.name}` : "🏆";
 
         if (winner && winner.id === playerId) {
@@ -1543,6 +1562,30 @@
     function updateCancelButton() {
       const canCancel = Boolean(isHost && playerId && myPlayer && room && ["setup", "waiting", "loading", "playing", "finished"].includes(room.status));
       $("cancelGameBtn").classList.toggle("hidden", !canCancel);
+    }
+
+    function getCurrentWinner() {
+      if (!players.length) return null;
+      return players
+        .slice()
+        .sort((a, b) => {
+          const scoreDiff = (b.score || 0) - (a.score || 0);
+          if (scoreDiff !== 0) return scoreDiff;
+          return (a.joinedAt?.seconds || 0) - (b.joinedAt?.seconds || 0);
+        })[0];
+    }
+
+    function getStoredWinner() {
+      if (room?.winnerId && room?.winnerName) {
+        return {
+          id: room.winnerId,
+          name: room.winnerName,
+          score: room.winnerScore || 0
+        };
+      }
+
+      // Fallback para partidas antiguas que terminaron antes de guardar winnerId.
+      return getCurrentWinner();
     }
 
     function renderPlayers() {
@@ -1797,6 +1840,9 @@
         currentQuestion: 0,
         hostId: "",
         generationId: "",
+        winnerId: "",
+        winnerName: "",
+        winnerScore: 0,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
