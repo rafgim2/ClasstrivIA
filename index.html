@@ -842,7 +842,7 @@
             👦 <strong>Alumnos:</strong> escriben el código que les dé el profesor y luego ponen su nombre.
           </div>
 
-          <div class="form-grid">
+          <div class="form-grid" id="roomJoinForm">
             <div>
               <label for="roomCodeInput">Código de sala para alumnos</label>
               <input id="roomCodeInput" maxlength="8" placeholder="Ejemplo: 482913" autocomplete="off" inputmode="numeric" />
@@ -1371,16 +1371,24 @@
 
     function updateRoomAccessButtons() {
       const createBtn = $("createRoomBtn");
+      const joinBtn = $("joinRoomBtn");
       const actions = $("roomActions");
+      const joinForm = $("roomJoinForm");
       const hint = $("studentRoomHint");
-      if (!createBtn || !actions) return;
+      if (!createBtn || !joinBtn || !actions || !joinForm) return;
 
       const canCreateRoom = Boolean(isAllowedHostAccount);
+
+      // Profesor autorizado: solo ve Crear sala nueva.
+      // Alumnos/no autorizados: solo ven campo de código + Entrar en sala.
       createBtn.classList.toggle("hidden", !canCreateRoom);
-      actions.classList.toggle("only-join", !canCreateRoom);
+      joinBtn.classList.toggle("hidden", canCreateRoom);
+      joinForm.classList.toggle("hidden", canCreateRoom);
+      actions.classList.add("only-join");
+
       if (hint) {
         hint.textContent = canCreateRoom
-          ? "Como profesor puedes crear una sala nueva. Los alumnos también pueden entrar escribiendo el código."
+          ? "Pulsa Crear sala nueva. La app generará un código automáticamente para tus alumnos."
           : "Si eres alumno, escribe el código de sala que te dé tu profesor.";
       }
     }
