@@ -474,12 +474,30 @@
 
     .copyright-note {
       margin-top: 18px;
-      padding-top: 14px;
+      padding-top: 22px;
       border-top: 2px solid rgba(107, 114, 128, 0.22);
       text-align: center;
       font-size: 14px;
       color: #6b7280;
       font-weight: 900;
+    }
+
+    .creator-image-wrap {
+      width: 94px;
+      height: 94px;
+      margin: 0 auto 16px;
+      padding: 7px;
+      border-radius: 28px;
+      background: white;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    }
+
+    .creator-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      border-radius: 22px;
     }
 
 
@@ -972,7 +990,12 @@
           Sala actual: <strong id="sideRoomCode">—</strong>. 
         </p>
 
-        <div class="copyright-note">© By Rafael Gimeno</div>
+        <div class="copyright-note">
+          <div class="creator-image-wrap">
+            <img src="yo.png" alt="Rafael Gimeno" class="creator-image" />
+          </div>
+          <div>© By Rafael Gimeno</div>
+        </div>
       </aside>
     </div>
   </main>
