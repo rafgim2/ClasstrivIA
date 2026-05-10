@@ -472,6 +472,133 @@
     }
 
 
+    .winner-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.45), transparent 34%),
+        linear-gradient(135deg, rgba(124,58,237,0.88), rgba(6,182,212,0.88), rgba(249,115,22,0.88));
+      backdrop-filter: blur(8px);
+      animation: winnerOverlayIn 0.45s ease both;
+    }
+
+    .winner-overlay.hidden {
+      display: none;
+    }
+
+    .winner-card {
+      width: min(760px, 94vw);
+      border-radius: 44px;
+      padding: clamp(24px, 5vw, 46px);
+      text-align: center;
+      background: rgba(255,255,255,0.96);
+      border: 8px solid #facc15;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.38), inset 0 0 0 5px rgba(255,255,255,0.65);
+      position: relative;
+      overflow: hidden;
+      animation: winnerCardPop 0.75s cubic-bezier(.2,1.35,.35,1) both;
+    }
+
+    .winner-card::before,
+    .winner-card::after {
+      content: "✨";
+      position: absolute;
+      font-size: 70px;
+      opacity: 0.8;
+      animation: winnerSparkle 1.3s ease-in-out infinite alternate;
+    }
+
+    .winner-card::before {
+      top: 22px;
+      left: 26px;
+    }
+
+    .winner-card::after {
+      bottom: 18px;
+      right: 28px;
+      animation-delay: 0.35s;
+    }
+
+    .winner-trophy {
+      font-size: clamp(130px, 24vw, 260px);
+      line-height: 0.9;
+      display: inline-block;
+      filter: drop-shadow(0 18px 0 rgba(180,83,9,0.25)) drop-shadow(0 28px 28px rgba(0,0,0,0.2));
+      animation: winnerTrophyDance 1.05s ease-in-out infinite;
+      transform-origin: 50% 85%;
+    }
+
+    .winner-title {
+      margin: 18px 0 6px;
+      font-size: clamp(42px, 8vw, 86px);
+      line-height: 0.95;
+      font-weight: 1000;
+      color: #111827;
+      letter-spacing: -2px;
+      text-shadow: 0 7px 0 rgba(250,204,21,0.45);
+    }
+
+    .winner-player-name {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 14px 24px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #facc15, #fb923c);
+      color: #111827;
+      font-size: clamp(32px, 7vw, 70px);
+      font-weight: 1000;
+      box-shadow: 0 12px 0 rgba(180,83,9,0.35), 0 20px 35px rgba(0,0,0,0.18);
+      animation: winnerNamePulse 0.9s ease-in-out infinite alternate;
+    }
+
+    .winner-subtitle {
+      margin: 24px 0 0;
+      color: #4b5563;
+      font-size: clamp(20px, 3vw, 32px);
+      font-weight: 1000;
+    }
+
+    .winner-close {
+      margin-top: 26px;
+      width: auto;
+      min-width: 220px;
+      padding-left: 28px;
+      padding-right: 28px;
+    }
+
+    @keyframes winnerOverlayIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes winnerCardPop {
+      0% { transform: scale(0.55) rotate(-7deg); opacity: 0; }
+      70% { transform: scale(1.06) rotate(2deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes winnerTrophyDance {
+      0%, 100% { transform: rotate(-5deg) translateY(0) scale(1); }
+      25% { transform: rotate(5deg) translateY(-10px) scale(1.04); }
+      50% { transform: rotate(-2deg) translateY(0) scale(1.02); }
+      75% { transform: rotate(6deg) translateY(-8px) scale(1.05); }
+    }
+
+    @keyframes winnerSparkle {
+      from { transform: scale(0.8) rotate(-12deg); opacity: 0.45; }
+      to { transform: scale(1.18) rotate(12deg); opacity: 1; }
+    }
+
+    @keyframes winnerNamePulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.055); }
+    }
+
+
 
     .host-auth-box {
       margin-bottom: 14px;
@@ -502,6 +629,17 @@
 
 <body>
   <div class="confetti" id="confetti"></div>
+
+  <div class="winner-overlay hidden" id="winnerOverlay">
+    <div class="winner-card">
+      <div class="winner-trophy">🏆</div>
+      <div class="winner-title">¡HAS GANADO!</div>
+      <div class="winner-player-name" id="winnerOverlayName">Ganador</div>
+      <p class="winner-subtitle">¡Fanfarria de campeón!</p>
+      <button class="btn secondary winner-close" id="winnerCloseBtn">Cerrar celebración 🎉</button>
+    </div>
+  </div>
+
 
   <main class="app">
     <header class="topbar">
@@ -700,6 +838,7 @@
     let autoAdvanceTimeout = null;
     let autoAdvanceQuestionKey = "";
     let cleanupScheduled = false;
+    let winnerCelebrationShownFor = "";
     let unsubscribeRoom = null;
     let unsubscribePlayers = null;
 
@@ -707,6 +846,11 @@
     const hostMusic = new Audio("music.mp3");
     hostMusic.loop = true;
     hostMusic.volume = 0.28;
+
+    // Música de victoria: solo suena en el dispositivo del jugador ganador.
+    const winnerMusic = new Audio("ganador.mp3");
+    winnerMusic.loop = false;
+    winnerMusic.volume = 0.9;
 
     const $ = (id) => document.getElementById(id);
 
@@ -733,6 +877,7 @@
     $("cancelGameBtn").addEventListener("click", cancelGame);
     $("teacherLoginBtn").addEventListener("click", teacherLogin);
     $("teacherLogoutBtn").addEventListener("click", teacherLogout);
+    $("winnerCloseBtn").addEventListener("click", hideWinnerCelebration);
 
     $("playerName").addEventListener("keydown", (ev) => {
       if (ev.key === "Enter") joinGame();
@@ -1179,8 +1324,11 @@
 
       if (room.status === "setup") {
         stopHostMusic();
+        stopWinnerMusic();
+        hideWinnerCelebration();
         clearAutoAdvance();
         cleanupScheduled = false;
+        winnerCelebrationShownFor = "";
 
         if (isHost) {
           showScreen("setup");
@@ -1216,6 +1364,11 @@
         showScreen("finished");
         const winner = players[0];
         $("winnerName").textContent = winner ? `🏆 ${winner.name}` : "🏆";
+
+        if (winner && winner.id === playerId) {
+          showWinnerCelebration(winner);
+        }
+
         $("resetGameBtn").classList.toggle("hidden", !isHost);
         scheduleAutoCleanupAfterFinished();
       }
@@ -1332,6 +1485,33 @@
       hostMusic.currentTime = 0;
     }
 
+    function playWinnerMusic() {
+      winnerMusic.currentTime = 0;
+      winnerMusic.play().catch(() => {
+        // Si el navegador bloquea el audio, la animación seguirá funcionando.
+      });
+    }
+
+    function stopWinnerMusic() {
+      winnerMusic.pause();
+      winnerMusic.currentTime = 0;
+    }
+
+    function showWinnerCelebration(winner) {
+      const celebrationKey = `${room?.generationId || "game"}_${winner.id}_${room?.finishedAt?.seconds || "finished"}`;
+      if (winnerCelebrationShownFor === celebrationKey) return;
+
+      winnerCelebrationShownFor = celebrationKey;
+      $("winnerOverlayName").textContent = winner.name || "Ganador";
+      $("winnerOverlay").classList.remove("hidden");
+      playWinnerMusic();
+    }
+
+    function hideWinnerCelebration() {
+      $("winnerOverlay").classList.add("hidden");
+      stopWinnerMusic();
+    }
+
     function playAnswerSound(correct) {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -1428,6 +1608,8 @@
      ************************************************************/
     async function cleanupAndResetRoom({ clearLocalHost = false } = {}) {
       stopHostMusic();
+      stopWinnerMusic();
+      hideWinnerCelebration();
       clearAutoAdvance();
       cleanupScheduled = false;
 
