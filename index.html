@@ -1382,7 +1382,7 @@
           <button class="btn danger small hidden" id="teacherLogoutBtn" style="margin-top: 10px;">Cerrar sesión</button>
         </div>
 
-        <button class="btn danger small hidden" id="cancelGameBtn">Cancelar partida 🛑</button>
+        <button class="btn danger small" id="cancelGameBtn" style="display: inline-block;">Cancelar partida 🛑</button>
         <button class="btn secondary small hidden" id="leaveRoomBtn" style="display: none; margin-top: 10px;">Salir de la sala 🚪</button>
 
         <div class="side-section" id="rankingSection">
@@ -3281,4 +3281,18 @@
 
   // Call this function when the teacher exits the room
   hideLeaveRoomButtonWhenTeacherLeaves();
+</script>
+
+<script>
+  // Function to ensure the "Cancelar partida" button is visible for the teacher during the game
+  function showCancelGameButtonForTeacher() {
+    const cancelGameButton = document.getElementById('cancelGameBtn');
+    // Make sure the button is visible for the teacher once the game starts
+    if (/* condition to check if the teacher is in the game */) {
+      cancelGameButton.style.display = 'inline-block';  // Ensure it is shown for the teacher
+    }
+  }
+
+  // Call this function when the game starts or when the teacher enters the game
+  showCancelGameButtonForTeacher();
 </script>
