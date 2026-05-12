@@ -1394,7 +1394,7 @@
         <button class="btn secondary small hidden" id="leaveRoomBtn" style="margin-top: 10px;">Salir de la sala 🚪</button>
 
         <div class="side-section" id="rankingSection">
-          <h3 style="margin-top: 18px;"><span style="display: none;">🏆 Ranking</span></h3>
+          <h3 id="rankingTitle" style="margin-top: 18px;">🏆 Ranking</h3>
           <div class="ranking-list" id="rankingList"></div>
         </div>
 
@@ -2748,8 +2748,10 @@
       document.body.classList.remove("teacher-playing-mode");
       document.body.classList.remove("teacher-final-mode");
       layout?.classList.remove("teacher-playing-layout");
-      rankingSection.classList.remove("hidden");
-      playersSection.classList.remove("hidden");
+
+      const gameStarted = Boolean(room && ["playing", "finished"].includes(room.status));
+      rankingSection.classList.toggle("hidden", !gameStarted);
+      playersSection.classList.toggle("hidden", gameStarted);
     }
 
     /************************************************************
