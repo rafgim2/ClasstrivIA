@@ -1366,7 +1366,7 @@
           <p class="subtitle">Clasificación final</p>
           <div class="big-score" id="winnerName">🏆</div>
           <div class="final-ranking-section hidden" id="finalRankingSection">
-            <h2 id="rankingTitle" style="display: block;">🏆 Ranking final</h2>
+            <h2 id="rankingTitle" style="display: none; text-align: center;">🏆 Ranking final</h2>
             <div class="final-ranking-list" id="finalRankingList"></div>
           </div>
           <div class="notice">La sala se limpiará automáticamente en unos segundos para poder empezar una nueva partida.</div>
@@ -1383,7 +1383,7 @@
         </div>
 
         <div class="ranking-container">
-        <h2 id="rankingTitle" style="display: block;">🏆 Ranking final</h2>
+        <h2 id="rankingTitle" style="display: none; text-align: center;">🏆 Ranking final</h2>
         <div class="final-ranking-list" id="finalRankingList">
             <!-- Ranking content goes here -->
         </div>
@@ -3420,4 +3420,15 @@
 
   // Call this function to adjust button placement and visibility when the game starts
   moveCancelGameButtonBelowRanking();
+</script>
+
+<script>
+  // Assuming there's a flag or event to detect when questions have started
+  const startQuestions = () => {
+    // Show the ranking title when the game starts
+    document.getElementById('rankingTitle').style.display = 'block';
+  };
+
+  // Simulate starting the questions after 3 seconds (this can be replaced by actual game logic)
+  setTimeout(startQuestions, 3000); // Adjust this to your logic for when the game starts
 </script>
