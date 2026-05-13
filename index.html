@@ -8,10 +8,16 @@
 
   <style>
     :root {
-      --bg1: #7c3aed;
-      --bg2: #06b6d4;
-      --bg3: #f97316;
-      --card: rgba(255, 255, 255, 0.94);
+      --bg1: #2563eb;
+      --bg2: #38bdf8;
+      --bg3: #fde68a;
+      --card: linear-gradient(135deg, rgba(240, 249, 255, 0.97), rgba(219, 234, 254, 0.95) 42%, rgba(237, 233, 254, 0.94) 72%, rgba(255, 251, 235, 0.94));
+      --soft-panel: linear-gradient(135deg, rgba(239, 246, 255, 0.96), rgba(224, 242, 254, 0.94) 48%, rgba(238, 242, 255, 0.94));
+      --soft-panel-strong: linear-gradient(135deg, #eff6ff, #dbeafe 45%, #ede9fe 75%, #fef3c7);
+      --soft-chip: linear-gradient(135deg, #ffffff, #eff6ff 48%, #dbeafe 82%, #fef9c3);
+      --soft-question: linear-gradient(135deg, #f0f9ff, #dbeafe 46%, #eef2ff 76%, #fff7ed);
+      --school-line: rgba(59, 130, 246, 0.12);
+      --school-margin: rgba(244, 114, 182, 0.16);
       --text: #1f2937;
       --muted: #6b7280;
       --green: #22c55e;
@@ -30,17 +36,95 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(255,255,255,0.35), transparent 28%),
+        radial-gradient(circle at 12% 10%, rgba(255,255,255,0.55), transparent 22%),
+        radial-gradient(circle at 82% 18%, rgba(254,240,138,0.38), transparent 24%),
+        radial-gradient(circle at 28% 86%, rgba(196,181,253,0.34), transparent 26%),
         linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
-      background-size: 200% 200%;
-      animation: fondo 12s ease infinite;
+      background-size: 180% 180%;
+      animation: fondo 15s ease infinite;
       overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.58;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.00) 0 31px, rgba(255,255,255,0.25) 32px 33px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.00) 0 31px, rgba(255,255,255,0.12) 32px 33px),
+        radial-gradient(circle, rgba(255,255,255,0.26) 1.3px, transparent 1.5px);
+      background-size: 100% 100%, 100% 100%, 30px 30px;
+      mix-blend-mode: soft-light;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.22;
+      background:
+        linear-gradient(115deg, transparent 0 18%, rgba(255,255,255,0.55) 24%, transparent 31%),
+        linear-gradient(295deg, transparent 0 62%, rgba(255,255,255,0.34) 69%, transparent 78%);
+      animation: brilloAula 11s ease-in-out infinite alternate;
     }
 
     @keyframes fondo {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
+    }
+
+    @keyframes brilloAula {
+      from { transform: translateX(-4%) translateY(-2%); opacity: 0.14; }
+      to { transform: translateX(4%) translateY(2%); opacity: 0.30; }
+    }
+
+    .school-doodles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .school-doodles span {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: clamp(48px, 6vw, 86px);
+      height: clamp(48px, 6vw, 86px);
+      border-radius: 28px;
+      background: rgba(255,255,255,0.24);
+      border: 2px solid rgba(255,255,255,0.34);
+      box-shadow: 0 14px 34px rgba(30,64,175,0.12);
+      backdrop-filter: blur(4px);
+      font-size: clamp(28px, 4vw, 50px);
+      opacity: 0.42;
+      animation: doodleFloat 16s ease-in-out infinite alternate;
+      transform: rotate(var(--r, 0deg));
+      filter: saturate(1.08);
+    }
+
+    .school-doodles span:nth-child(1) { left: 4%; top: 14%; --r: -12deg; animation-duration: 17s; }
+    .school-doodles span:nth-child(2) { left: 78%; top: 9%; --r: 9deg; animation-duration: 19s; animation-delay: -4s; }
+    .school-doodles span:nth-child(3) { left: 91%; top: 37%; --r: -8deg; animation-duration: 15s; animation-delay: -8s; }
+    .school-doodles span:nth-child(4) { left: 7%; top: 66%; --r: 12deg; animation-duration: 21s; animation-delay: -3s; }
+    .school-doodles span:nth-child(5) { left: 64%; top: 76%; --r: -14deg; animation-duration: 18s; animation-delay: -9s; }
+    .school-doodles span:nth-child(6) { left: 42%; top: 8%; --r: 6deg; animation-duration: 20s; animation-delay: -6s; }
+    .school-doodles span:nth-child(7) { left: 84%; top: 63%; --r: 15deg; animation-duration: 16s; animation-delay: -12s; }
+    .school-doodles span:nth-child(8) { left: 21%; top: 82%; --r: -5deg; animation-duration: 22s; animation-delay: -5s; }
+    .school-doodles span:nth-child(9) { left: 32%; top: 28%; --r: 11deg; animation-duration: 18s; animation-delay: -11s; opacity: 0.26; }
+    .school-doodles span:nth-child(10) { left: 58%; top: 38%; --r: -10deg; animation-duration: 24s; animation-delay: -7s; opacity: 0.22; }
+
+    @keyframes doodleFloat {
+      0% { transform: translate3d(0,0,0) rotate(var(--r, 0deg)) scale(1); }
+      45% { transform: translate3d(18px,-24px,0) rotate(calc(var(--r, 0deg) + 8deg)) scale(1.04); }
+      100% { transform: translate3d(-14px,22px,0) rotate(calc(var(--r, 0deg) - 8deg)) scale(0.98); }
     }
 
     .confetti {
@@ -67,7 +151,7 @@
 
     .app {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       width: min(1180px, calc(100% - 28px));
       margin: 0 auto;
       padding: 24px 0 36px;
@@ -104,6 +188,17 @@
       font-size: 36px;
     }
 
+    .logo-badge {
+      background:
+        radial-gradient(circle at 30% 25%, #ffffff, #fef9c3 42%, #dbeafe 100%);
+      animation: logoWiggle 3.8s ease-in-out infinite;
+    }
+
+    @keyframes logoWiggle {
+      0%, 100% { transform: rotate(-8deg) translateY(0); }
+      50% { transform: rotate(-2deg) translateY(-4px); }
+    }
+
     .pill {
       display: inline-flex;
       align-items: center;
@@ -131,15 +226,33 @@
     }
 
     .card {
+      position: relative;
+      overflow: hidden;
       background: var(--card);
-      border: 4px solid rgba(255,255,255,0.7);
+      border: 5px solid rgba(255,255,255,0.78);
       border-radius: 34px;
       padding: clamp(18px, 4vw, 32px);
-      box-shadow: 0 22px 60px rgba(0,0,0,0.24);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 24px 70px rgba(30,64,175,0.24), 0 0 0 8px rgba(255,255,255,0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.40;
+      background:
+        radial-gradient(circle at 14% 18%, rgba(250,204,21,0.30) 0 14px, transparent 15px),
+        radial-gradient(circle at 92% 18%, rgba(34,197,94,0.20) 0 12px, transparent 13px),
+        radial-gradient(circle at 82% 84%, rgba(168,85,247,0.18) 0 17px, transparent 18px),
+        linear-gradient(90deg, transparent 0 34px, var(--school-margin) 35px 37px, transparent 38px),
+        repeating-linear-gradient(0deg, transparent 0 28px, var(--school-line) 29px 30px);
     }
 
     .screen {
+      position: relative;
+      z-index: 1;
       min-height: 560px;
       display: none;
     }
@@ -299,8 +412,8 @@
       gap: 10px;
       padding: 14px 16px;
       border-radius: 20px;
-      background: white;
-      border: 3px solid #e5e7eb;
+      background: var(--soft-chip);
+      border: 3px solid rgba(147, 197, 253, 0.72);
       font-weight: 1000;
       font-size: 18px;
       box-shadow: 0 8px 18px rgba(0,0,0,0.08);
@@ -452,9 +565,9 @@
       margin-top: 26px;
       padding: clamp(18px, 3vw, 30px);
       border-radius: 34px;
-      background: linear-gradient(135deg, #fff7ed, #fef3c7);
-      border: 5px solid white;
-      box-shadow: inset 0 0 0 3px rgba(250,204,21,0.35), 0 14px 26px rgba(0,0,0,0.12);
+      background: var(--soft-panel-strong);
+      border: 5px solid rgba(255,255,255,0.9);
+      box-shadow: inset 0 0 0 3px rgba(59,130,246,0.14), 0 14px 26px rgba(0,0,0,0.12);
     }
 
     .final-ranking-section h2 {
@@ -695,16 +808,57 @@
     .side-card {
       position: sticky;
       top: 16px;
-      background: rgba(255,255,255,0.9);
+      overflow: hidden;
+      background: var(--soft-panel);
+      backdrop-filter: blur(14px);
       border-radius: 30px;
       padding: 20px;
-      box-shadow: 0 18px 44px rgba(0,0,0,0.2);
-      border: 4px solid rgba(255,255,255,0.65);
+      box-shadow: 0 20px 52px rgba(30,64,175,0.22), 0 0 0 7px rgba(255,255,255,0.12);
+      border: 5px solid rgba(255,255,255,0.72);
+    }
+
+    .side-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.34;
+      background:
+        radial-gradient(circle at 90% 8%, rgba(250,204,21,0.36) 0 18px, transparent 19px),
+        radial-gradient(circle at 10% 92%, rgba(34,197,94,0.18) 0 24px, transparent 25px),
+        repeating-linear-gradient(-45deg, transparent 0 20px, rgba(255,255,255,0.22) 21px 22px);
+    }
+
+    .side-card > * {
+      position: relative;
+      z-index: 1;
     }
 
     .side-card h3 {
       font-size: 26px;
       margin-bottom: 10px;
+    }
+
+    #rankingSection {
+      padding: 14px;
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.55), rgba(219,234,254,0.50) 56%, rgba(254,249,195,0.36)),
+        repeating-linear-gradient(0deg, transparent 0 26px, rgba(59,130,246,0.10) 27px 28px);
+      border: 3px solid rgba(255,255,255,0.62);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.35);
+    }
+
+    #rankingSection h3::after {
+      content: "  ✏️📚";
+      font-size: 0.76em;
+    }
+
+    #rankingList .player-chip,
+    .final-ranking-list .player-chip {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.98), rgba(239,246,255,0.96) 48%, rgba(219,234,254,0.96) 82%, rgba(254,249,195,0.92));
+      border-color: rgba(255,255,255,0.86);
     }
 
     .question-meta {
@@ -721,7 +875,8 @@
       color: white;
       font-size: 20px;
       font-weight: 1000;
-      background: #111827;
+      background: linear-gradient(135deg, #111827, #1e3a8a);
+      box-shadow: 0 8px 18px rgba(30,64,175,0.18), inset 0 0 0 1px rgba(255,255,255,0.22);
     }
 
     .meta-badge.topic { background: var(--purple); }
@@ -732,12 +887,37 @@
     }
 
     .question-box {
+      position: relative;
+      overflow: hidden;
       border-radius: 30px;
-      background: linear-gradient(135deg, #fef3c7, #fff7ed);
-      border: 5px solid white;
-      padding: clamp(22px, 4vw, 34px);
-      box-shadow: inset 0 0 0 3px rgba(251,146,60,0.25), 0 14px 26px rgba(0,0,0,0.12);
+      background:
+        linear-gradient(90deg, transparent 0 46px, rgba(244,114,182,0.20) 47px 50px, transparent 51px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.00) 0 32px, rgba(59,130,246,0.13) 33px 34px),
+        var(--soft-question);
+      border: 6px solid rgba(255,255,255,0.92);
+      padding: clamp(24px, 4vw, 38px);
+      box-shadow: inset 0 0 0 3px rgba(59,130,246,0.14), 0 16px 30px rgba(30,64,175,0.14);
       margin-bottom: 22px;
+    }
+
+    .question-box::before {
+      content: "✏️";
+      position: absolute;
+      right: 18px;
+      top: 12px;
+      font-size: clamp(28px, 4vw, 46px);
+      opacity: 0.28;
+      transform: rotate(12deg);
+    }
+
+    .question-box::after {
+      content: "★ ★ ★";
+      position: absolute;
+      left: 20px;
+      bottom: 12px;
+      color: rgba(250,204,21,0.62);
+      font-size: 22px;
+      letter-spacing: 5px;
     }
 
     .question-text {
@@ -1208,6 +1388,287 @@
     }
 
 
+    .setup-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    @media (max-width: 760px) {
+      .setup-actions { grid-template-columns: 1fr; }
+    }
+
+    .custom-trivial-panel {
+      margin-top: 22px;
+      padding: clamp(16px, 3vw, 24px);
+      border-radius: 30px;
+      background: linear-gradient(135deg, #eef2ff, #ecfeff);
+      border: 4px solid rgba(255,255,255,0.82);
+      box-shadow: inset 0 0 0 3px rgba(59,130,246,0.12), 0 12px 26px rgba(0,0,0,0.10);
+    }
+
+    .custom-trivial-panel h2 {
+      font-size: clamp(28px, 4vw, 46px);
+      margin-bottom: 8px;
+    }
+
+    .custom-helper {
+      margin: 0 0 18px;
+      color: #475569;
+      font-weight: 900;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 105px;
+      resize: vertical;
+      border: 4px solid #e5e7eb;
+      border-radius: 22px;
+      padding: 18px 20px;
+      font-size: 22px;
+      font-weight: 850;
+      outline: none;
+      background: white;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+
+    textarea:focus {
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 6px rgba(250,204,21,0.35);
+    }
+
+    .answer-editor-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .answer-editor-row {
+      display: grid;
+      grid-template-columns: 44px 1fr 124px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.66);
+      border: 2px solid rgba(148,163,184,0.24);
+    }
+
+    @media (max-width: 720px) {
+      .answer-editor-row {
+        grid-template-columns: 38px 1fr;
+      }
+
+      .correct-choice {
+        grid-column: 2 / 3;
+      }
+    }
+
+    .answer-letter {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      background: #111827;
+      color: white;
+      font-size: 22px;
+      font-weight: 1000;
+    }
+
+    .answer-editor-row input[type="text"] {
+      font-size: 20px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border-width: 3px;
+    }
+
+    .correct-choice {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      margin: 0;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: #fef9c3;
+      border: 3px solid #fde68a;
+      color: #854d0e;
+      font-size: 14px;
+      font-weight: 1000;
+      cursor: pointer;
+    }
+
+    .correct-choice input {
+      width: 20px;
+      height: 20px;
+      accent-color: #22c55e;
+    }
+
+    .custom-question-actions {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 760px) {
+      .custom-question-actions { grid-template-columns: 1fr; }
+    }
+
+    .ai-completion-box {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 24px;
+      background: #fff7ed;
+      border: 3px solid #fdba74;
+    }
+
+    .ai-completion-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 0 0 12px;
+      color: #9a3412;
+      font-size: 17px;
+      font-weight: 1000;
+      line-height: 1.25;
+    }
+
+    .ai-completion-option input {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 auto;
+      margin-top: 2px;
+      accent-color: #f97316;
+    }
+
+    .custom-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #111827;
+      color: #facc15;
+      font-weight: 1000;
+      margin: 10px 0 14px;
+    }
+
+    .custom-question-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .custom-question-item {
+      padding: 16px;
+      border-radius: 24px;
+      background: white;
+      border: 3px solid #e5e7eb;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    }
+
+    .custom-question-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 1000;
+    }
+
+    .custom-source-badge {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-size: 13px;
+      font-weight: 1000;
+    }
+
+    .custom-options-preview {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: #374151;
+      font-weight: 850;
+    }
+
+    .custom-options-preview li.correct-preview {
+      color: #166534;
+      font-weight: 1000;
+    }
+
+    .custom-question-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+
+
+
+    /* ✅ Corrección visual: en el ranking, al responder, se ilumina toda la pastilla.
+       El fondo escolar del ranking tenía más prioridad CSS y solo dejaba ver el borde. */
+    #rankingList .player-chip.answer-correct,
+    #rankingList .player-chip.answer-correct.score-bump {
+      background:
+        radial-gradient(circle at 18% 28%, rgba(255,255,255,0.78), transparent 30%),
+        linear-gradient(135deg, #bbf7d0, #dcfce7 46%, #f0fdf4 74%, #ecfccb) !important;
+      border-color: #22c55e !important;
+      box-shadow:
+        0 0 0 7px rgba(34,197,94,0.22),
+        0 16px 34px rgba(22,163,74,0.20),
+        inset 0 0 26px rgba(255,255,255,0.62) !important;
+      animation: rankingCorrectGlow 0.95s ease-in-out both;
+    }
+
+    #rankingList .player-chip.answer-wrong {
+      background:
+        radial-gradient(circle at 18% 28%, rgba(255,255,255,0.70), transparent 30%),
+        linear-gradient(135deg, #fecaca, #fee2e2 46%, #fff1f2 74%, #ffe4e6) !important;
+      border-color: #ef4444 !important;
+      box-shadow:
+        0 0 0 7px rgba(239,68,68,0.19),
+        0 16px 34px rgba(220,38,38,0.18),
+        inset 0 0 26px rgba(255,255,255,0.58) !important;
+      animation: rankingWrongGlow 0.95s ease-in-out both;
+    }
+
+    @keyframes rankingCorrectGlow {
+      0% { filter: brightness(1); transform: scale(1); }
+      45% { filter: brightness(1.08); transform: scale(1.015); }
+      100% { filter: brightness(1); transform: scale(1); }
+    }
+
+    @keyframes rankingWrongGlow {
+      0% { filter: brightness(1); transform: scale(1); }
+      45% { filter: brightness(1.05); transform: scale(1.01); }
+      100% { filter: brightness(1); transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body,
+      body::after,
+      .logo-badge,
+      .school-doodles span,
+      .confetti span {
+        animation: none !important;
+      }
+    }
+
     .hidden { display: none !important; }
 
     /* 🔒 Desactivado: no mostrar nunca estos botones (evita salidas/cancelaciones accidentales) */
@@ -1221,6 +1682,18 @@
 
 <body>
   <div class="confetti" id="confetti"></div>
+  <div class="school-doodles" aria-hidden="true">
+    <span>✏️</span>
+    <span>📚</span>
+    <span>🔢</span>
+    <span>🌍</span>
+    <span>🎲</span>
+    <span>🧪</span>
+    <span>⭐</span>
+    <span>🎵</span>
+    <span>📐</span>
+    <span>💡</span>
+  </div>
 
   <div class="winner-overlay hidden" id="winnerOverlay">
     <div class="winner-card">
@@ -1308,23 +1781,86 @@
           <div class="room-code-badge" id="setupRoomCodeBadge">----</div>
 
           <div class="form-grid two">
-            <div>
-              <label for="topicInput">Temática del trivial</label>
+            <div id="topicFieldWrap">
+              <label for="topicInput">Temática para trivial automático</label>
               <input id="topicInput" placeholder="Ejemplo: animales, planetas, tablas de multiplicar..." autocomplete="off" />
+              <div class="field-hint">Solo hace falta si no vas a crear preguntas propias. Si creas tu trivial, la IA tomará tus preguntas como ejemplo.</div>
             </div>
             <div>
-              <label for="questionCount">Preguntas</label>
-              <select id="questionCount">
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-              </select>
+              <label for="questionCount">Preguntas totales</label>
+              <input id="questionCount" type="number" min="1" max="50" step="1" value="10" inputmode="numeric" />
             </div>
           </div>
 
-          <button class="btn secondary" id="saveSetupBtn">Guardar temática 🎯</button>
-          <div class="notice">Cuando estén todos conectados, pulsa <strong>Empezar partida</strong>.</div>
+          <div class="notice hidden" id="ownTrivialTopicNotice">
+            ✍️ Modo trivial propio activo: no necesitas escribir temática. Si completas con IA, usará tus preguntas como ejemplo de estilo, nivel y contenido.
+          </div>
+
+          <div class="setup-actions">
+            <button class="btn secondary" id="saveSetupBtn">Guardar configuración 🎯</button>
+            <button class="btn warning" id="toggleCustomTrivialBtn" type="button">Crear trivial propio ✍️</button>
+          </div>
+
+          <div class="custom-trivial-panel hidden" id="customTrivialPanel">
+            <h2>Crear trivial propio</h2>
+            <p class="custom-helper">
+              Escribe tus preguntas, añade 4 respuestas y marca cuál es la correcta. Puedes añadir todas las que quieras.
+              Si faltan preguntas hasta llegar al número total elegido, la IA puede completarlas siguiendo el estilo de las tuyas.
+            </p>
+
+            <div class="custom-counter" id="customQuestionCounter">0 preguntas creadas</div>
+
+            <div class="form-grid">
+              <div>
+                <label for="customQuestionInput">Pregunta</label>
+                <textarea id="customQuestionInput" placeholder="Ejemplo: ¿Cuál es el planeta más cercano al Sol?"></textarea>
+              </div>
+
+              <div>
+                <label>Respuestas opcionales</label>
+                <div class="answer-editor-grid">
+                  <div class="answer-editor-row">
+                    <span class="answer-letter">A</span>
+                    <input id="customOption0" type="text" placeholder="Respuesta A" autocomplete="off" />
+                    <label class="correct-choice"><input type="radio" name="customCorrect" value="0" checked /> Correcta</label>
+                  </div>
+                  <div class="answer-editor-row">
+                    <span class="answer-letter">B</span>
+                    <input id="customOption1" type="text" placeholder="Respuesta B" autocomplete="off" />
+                    <label class="correct-choice"><input type="radio" name="customCorrect" value="1" /> Correcta</label>
+                  </div>
+                  <div class="answer-editor-row">
+                    <span class="answer-letter">C</span>
+                    <input id="customOption2" type="text" placeholder="Respuesta C" autocomplete="off" />
+                    <label class="correct-choice"><input type="radio" name="customCorrect" value="2" /> Correcta</label>
+                  </div>
+                  <div class="answer-editor-row">
+                    <span class="answer-letter">D</span>
+                    <input id="customOption3" type="text" placeholder="Respuesta D" autocomplete="off" />
+                    <label class="correct-choice"><input type="radio" name="customCorrect" value="3" /> Correcta</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="custom-question-actions">
+              <button class="btn" id="addCustomQuestionBtn" type="button">Añadir pregunta ➕</button>
+              <button class="btn secondary" id="clearCustomQuestionFormBtn" type="button">Limpiar formulario 🧽</button>
+            </div>
+
+            <div class="ai-completion-box">
+              <label class="ai-completion-option">
+                <input id="completeWithAi" type="checkbox" checked />
+                <span>Al empezar la partida, completar con IA si mis preguntas no llegan al número total elegido.</span>
+              </label>
+              <button class="btn warning small" id="completeCustomWithAiBtn" type="button">Completar ahora con IA hasta el total ⚡</button>
+            </div>
+
+            <div class="notice hidden" id="customTrivialNotice"></div>
+            <div class="custom-question-list" id="customQuestionList"></div>
+          </div>
+
+          <div class="notice">Cuando estén todos conectados, pulsa <strong>Empezar partida</strong>. Si has creado preguntas propias, se usarán primero.</div>
         </div>
 
         <div id="screenWaiting" class="screen">
@@ -1515,13 +2051,63 @@
     const displayedRankingScores = new Map();
     const rankingScoreAnimations = new Map();
     let rankingRenderToken = 0;
+    let customQuestionsDraft = [];
+    let lastSetupRoomSyncKey = "";
     let unsubscribeRoom = null;
     let unsubscribePlayers = null;
 
-    // Música de fondo: solo se intenta reproducir en el dispositivo host.
-    const hostMusic = new Audio("music.mp3");
+    /************************************************************
+     * MÚSICA DE FONDO (PROFESOR Y ALUMNOS)
+     * - Archivos esperados: music1.mp3 ... music18.mp3
+     * - El profesor elige uno al azar al iniciar y lo guarda en Firestore.
+     * - Los alumnos reproducen ese mismo archivo cuando empieza la partida.
+     ************************************************************/
+    const HOST_MUSIC_TOTAL = 18;
+    const HOST_MUSIC_STORAGE_KEY = "trivial_host_music_bag_v1";
+    let currentHostMusicFile = "";
+
+    const hostMusic = new Audio();
     hostMusic.loop = true;
     hostMusic.volume = 0.28;
+    hostMusic.preload = "auto";
+
+    function buildHostMusicList() {
+      return Array.from({ length: HOST_MUSIC_TOTAL }, (_, i) => `music${i + 1}.mp3`);
+    }
+
+    function shuffleInPlace(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function getNextHostMusicFile() {
+      let bag = [];
+      try {
+        const raw = safeStorageGet(HOST_MUSIC_STORAGE_KEY);
+        if (raw) bag = JSON.parse(raw);
+      } catch (_) {
+        bag = [];
+      }
+
+      if (!Array.isArray(bag) || bag.length === 0) {
+        bag = shuffleInPlace(buildHostMusicList());
+      }
+
+      const next = bag.pop();
+      safeStorageSet(HOST_MUSIC_STORAGE_KEY, JSON.stringify(bag));
+      return next;
+    }
+
+    function setHostMusicSource(file) {
+      if (!file) return;
+      if (currentHostMusicFile === file) return;
+      currentHostMusicFile = file;
+      hostMusic.src = file;
+      try { hostMusic.load(); } catch (_) {}
+    }
 
     // Música de victoria: solo suena en el dispositivo del jugador ganador.
     const winnerMusic = new Audio("ganador.mp3");
@@ -1559,6 +2145,12 @@
     $("teacherLogoutBtn").addEventListener("click", teacherLogout);
     $("winnerCloseBtn").addEventListener("click", hideWinnerCelebration);
     $("loserCloseBtn").addEventListener("click", hideLoserEncouragement);
+    $("toggleCustomTrivialBtn").addEventListener("click", toggleCustomTrivialPanel);
+    $("addCustomQuestionBtn").addEventListener("click", () => addCustomQuestionFromForm());
+    $("clearCustomQuestionFormBtn").addEventListener("click", clearCustomQuestionForm);
+    $("completeCustomWithAiBtn").addEventListener("click", completeCustomQuestionsWithAi);
+    $("topicInput").addEventListener("input", updateTopicFieldVisibility);
+    $("questionCount").addEventListener("input", renderCustomQuestionBuilder);
 
 
     $("roomCodeInput").addEventListener("keydown", (ev) => {
@@ -1671,6 +2263,8 @@
       winnerCelebrationShownFor = "";
       loserEncouragementShownFor = "";
       hostWinnerMusicShownFor = "";
+      customQuestionsDraft = [];
+      lastSetupRoomSyncKey = "";
       hideWinnerCelebration();
       hideLoserEncouragement();
       clearAutoAdvance();
@@ -1789,6 +2383,8 @@
       room = null;
       players = [];
       myPlayer = null;
+      customQuestionsDraft = [];
+      lastSetupRoomSyncKey = "";
       safeStorageRemove("trivial_player_id");
       playerId = null;
       updateUrlRoomCode("");
@@ -2033,17 +2629,38 @@
         return;
       }
 
-      const topic = $("topicInput").value.trim();
-      const questionCount = Number($("questionCount").value);
+      if (!tryAutoAddPendingCustomQuestion()) return;
 
-      if (!topic) {
-        alert("Escribe una temática para el trivial.");
+      const topicInputValue = $("topicInput").value.trim();
+      const questionCount = getRequestedQuestionCount();
+      const customQuestions = sanitizeQuestionsForStorage(customQuestionsDraft);
+      const completeWithAi = $("completeWithAi")?.checked !== false;
+      const hasCustomQuestions = customQuestions.length > 0;
+      const topic = hasCustomQuestions ? topicInputValue : topicInputValue;
+
+      if (!hasCustomQuestions && !topic) {
+        alert("Escribe una temática si quieres que la IA cree todo el trivial automáticamente. Si prefieres un trivial propio, añade al menos una pregunta en el creador.");
         return;
       }
+
+      if (!questionCount) {
+        alert("Escribe un número de preguntas entre 1 y 50.");
+        return;
+      }
+
+      if (customQuestionsDraft.length && !customQuestions.length) {
+        alert("Hay preguntas propias, pero ninguna está completa. Revisa que cada una tenga 4 respuestas y una correcta.");
+        return;
+      }
+
+      customQuestionsDraft = customQuestions;
+      renderCustomQuestionBuilder();
 
       await updateDoc(roomRef, {
         topic,
         questionCount,
+        customQuestions,
+        completeWithAi,
         status: "waiting",
         questions: [],
         currentQuestion: 0,
@@ -2058,43 +2675,47 @@
     }
 
     async function startGame() {
-      if (!isHost || !room?.topic) {
-        alert("Solo la cuenta autorizada puede generar preguntas y empezar la partida.");
+      if (!isHost) {
+        alert("Solo la cuenta autorizada puede preparar preguntas y empezar la partida.");
         return;
       }
+
+      const hasSavedCustomQuestions = Array.isArray(room?.customQuestions) && room.customQuestions.length > 0;
+      if (!hasSavedCustomQuestions && !room?.topic) {
+        alert("Guarda una temática para un trivial automático o crea al menos una pregunta propia antes de empezar.");
+        return;
+      }
+
       if (getStudentPlayers().length === 0) {
         alert("Todavía no hay alumnos conectados.");
         return;
       }
 
       const generationId = makeId();
+      const bgMusicFile = getNextHostMusicFile();
 
       try {
-        startHostMusic();
+        startHostMusic(bgMusicFile);
 
         await updateDoc(roomRef, {
           status: "loading",
           generationId,
+          bgMusicFile,
           winnerId: "",
           winnerName: "",
           winnerScore: 0,
           updatedAt: serverTimestamp()
         });
 
-        const requestedCount = Number(room.questionCount || 10);
-        const questions = await generateQuestionsWithoutRepeats({
-          topic: room.topic,
-          questionCount: requestedCount,
-          level: "Primaria",
-          language: "es"
-        });
+        const requestedCount = Math.max(1, Math.min(50, Number(room.questionCount || 10)));
+        const questions = await buildQuestionsForGame(requestedCount);
 
         if (!questions.length) {
-          throw new Error("La función no ha devuelto preguntas válidas.");
+          throw new Error("No hay preguntas válidas para iniciar la partida.");
         }
 
         if (questions.length < requestedCount) {
-          alert(`La IA ha devuelto ${questions.length} preguntas únicas. Continuamos sin repetidas.`);
+          alert(`Se han preparado ${questions.length} preguntas únicas. Continuamos sin repetidas.`);
         }
 
         const latestRoom = (await getDoc(roomRef)).data();
@@ -2113,13 +2734,43 @@
       } catch (error) {
         console.error(error);
         stopHostMusic();
-        alert("No se han podido generar las preguntas. Revisa la Firebase Function generateQuestions, la región y los registros de Functions.");
+        alert("No se han podido preparar las preguntas. Revisa la Firebase Function generateQuestions, la región y los registros de Functions.");
         await updateDoc(roomRef, {
           status: "waiting",
           generationId: "",
           updatedAt: serverTimestamp()
         });
       }
+    }
+
+    async function buildQuestionsForGame(requestedCount) {
+      const manualQuestions = removeRepeatedQuestions(normalizeQuestions(room.customQuestions || []));
+      const shouldCompleteWithAi = room.completeWithAi !== false;
+
+      if (manualQuestions.length) {
+        const selectedManualQuestions = manualQuestions.slice(0, requestedCount);
+        const missingCount = requestedCount - selectedManualQuestions.length;
+
+        if (!shouldCompleteWithAi || missingCount <= 0) {
+          return selectedManualQuestions;
+        }
+
+        const aiQuestions = await generateQuestionsWithoutRepeats({
+          topic: buildAiCompletionTopic(room.topic, selectedManualQuestions),
+          questionCount: missingCount + Math.min(6, selectedManualQuestions.length),
+          level: "Primaria",
+          language: "es"
+        });
+
+        return removeRepeatedQuestions([...selectedManualQuestions, ...aiQuestions]).slice(0, requestedCount);
+      }
+
+      return generateQuestionsWithoutRepeats({
+        topic: room.topic,
+        questionCount: requestedCount,
+        level: "Primaria",
+        language: "es"
+      });
     }
 
     async function generateQuestionsWithoutRepeats(settings) {
@@ -2143,6 +2794,283 @@
       return bestQuestions.slice(0, settings.questionCount);
     }
 
+    function buildAiCompletionTopic(topic, seedQuestions = []) {
+      const cleanTopic = String(topic || "").trim();
+      const examples = seedQuestions
+        .slice(0, 10)
+        .map((q, index) => {
+          const options = Array.isArray(q.options) ? q.options : [];
+          const correct = options[q.correctIndex] || "";
+          const optionsText = options.map((option, optionIndex) => `${String.fromCharCode(65 + optionIndex)}) ${option}`).join(" · ");
+          return `${index + 1}. Pregunta: ${q.question} | Opciones: ${optionsText} | Correcta: ${correct}`;
+        })
+        .join("\n");
+
+      if (!examples) return cleanTopic || "Trivial de Primaria";
+
+      return `${cleanTopic || "Trivial propio de Primaria creado por el profesor"}\n\nToma como modelo estas preguntas creadas manualmente por el profesor. Genera preguntas nuevas del mismo tema aproximado, nivel, estilo, formato y dificultad. No repitas ninguna pregunta ni copies respuestas literalmente. Devuelve siempre 4 opciones claras y una única correcta.\n\nPreguntas de ejemplo:\n${examples}`;
+    }
+
+    /************************************************************
+     * CREADOR DE TRIVIAL PROPIO
+     ************************************************************/
+    function toggleCustomTrivialPanel() {
+      const panel = $("customTrivialPanel");
+      panel.classList.toggle("hidden");
+      renderCustomQuestionBuilder();
+      updateTopicFieldVisibility();
+    }
+
+    function updateTopicFieldVisibility() {
+      const panel = $("customTrivialPanel");
+      const topicWrap = $("topicFieldWrap");
+      const notice = $("ownTrivialTopicNotice");
+      const toggleBtn = $("toggleCustomTrivialBtn");
+      if (!panel || !topicWrap || !notice) return;
+
+      const customModeActive = !panel.classList.contains("hidden") || customQuestionsDraft.length > 0;
+      topicWrap.classList.toggle("hidden", customModeActive);
+      notice.classList.toggle("hidden", !customModeActive);
+
+      if (toggleBtn) {
+        toggleBtn.textContent = panel.classList.contains("hidden")
+          ? "Crear trivial propio ✍️"
+          : "Ocultar creador de trivial ✍️";
+      }
+    }
+
+    function getRoomTopicLabel() {
+      const customCount = Array.isArray(room?.customQuestions) ? room.customQuestions.length : 0;
+      if (customCount > 0) return room?.topic || "Trivial propio";
+      return room?.topic || "Trivial";
+    }
+
+    function syncSetupFormFromRoom() {
+      if (!room) return;
+      const updatedKey = room.updatedAt?.seconds || room.createdAt?.seconds || "sin-fecha";
+      const syncKey = `${roomCode}_${room.status}_${updatedKey}_${room.customQuestions?.length || 0}`;
+      if (lastSetupRoomSyncKey === syncKey) return;
+
+      lastSetupRoomSyncKey = syncKey;
+      $("topicInput").value = room.topic || "";
+      $("questionCount").value = String(room.questionCount || 10);
+      customQuestionsDraft = sanitizeQuestionsForStorage(room.customQuestions || []);
+      if ($("completeWithAi")) $("completeWithAi").checked = room.completeWithAi !== false;
+      renderCustomQuestionBuilder();
+      updateTopicFieldVisibility();
+    }
+
+    function getRequestedQuestionCount() {
+      const raw = Number($("questionCount")?.value || 10);
+      if (!Number.isFinite(raw)) return 0;
+      return Math.max(1, Math.min(50, Math.round(raw)));
+    }
+
+    function hasPendingCustomQuestionInput() {
+      const question = $("customQuestionInput")?.value.trim() || "";
+      const options = [0, 1, 2, 3].map(i => $("customOption" + i)?.value.trim() || "");
+      return Boolean(question || options.some(Boolean));
+    }
+
+    function tryAutoAddPendingCustomQuestion() {
+      if (!hasPendingCustomQuestionInput()) return true;
+      return addCustomQuestionFromForm({ keepNotice: true });
+    }
+
+    function addCustomQuestionFromForm({ keepNotice = false } = {}) {
+      const question = $("customQuestionInput").value.trim();
+      const options = [0, 1, 2, 3].map(i => $("customOption" + i).value.trim());
+      const checked = document.querySelector('input[name="customCorrect"]:checked');
+      const correctIndex = checked ? Number(checked.value) : 0;
+
+      if (!question) {
+        showNotice("customTrivialNotice", "Escribe la pregunta antes de añadirla.");
+        return false;
+      }
+
+      if (options.some(option => !option)) {
+        showNotice("customTrivialNotice", "Completa las 4 respuestas opcionales.");
+        return false;
+      }
+
+      if (new Set(options.map(normalizeTextForComparison)).size < 4) {
+        showNotice("customTrivialNotice", "Las 4 respuestas deben ser diferentes.");
+        return false;
+      }
+
+      if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex > 3) {
+        showNotice("customTrivialNotice", "Marca cuál es la respuesta correcta.");
+        return false;
+      }
+
+      customQuestionsDraft.push({
+        question,
+        options,
+        correctIndex,
+        source: "manual"
+      });
+
+      clearCustomQuestionForm();
+      renderCustomQuestionBuilder();
+
+      if (!keepNotice) {
+        showNotice("customTrivialNotice", "Pregunta añadida. No olvides guardar la configuración antes de empezar.");
+      }
+
+      return true;
+    }
+
+    function clearCustomQuestionForm() {
+      if ($("customQuestionInput")) $("customQuestionInput").value = "";
+      [0, 1, 2, 3].forEach(i => {
+        const input = $("customOption" + i);
+        if (input) input.value = "";
+      });
+      const firstRadio = document.querySelector('input[name="customCorrect"][value="0"]');
+      if (firstRadio) firstRadio.checked = true;
+      hideNotice("customTrivialNotice");
+    }
+
+    async function completeCustomQuestionsWithAi() {
+      if (!isHost) return;
+      if (!tryAutoAddPendingCustomQuestion()) return;
+
+      const topic = $("topicInput").value.trim();
+      const requestedCount = getRequestedQuestionCount();
+      const currentQuestions = removeRepeatedQuestions(normalizeQuestions(customQuestionsDraft));
+      const missing = requestedCount - currentQuestions.length;
+
+      if (!topic && currentQuestions.length === 0) {
+        showNotice("customTrivialNotice", "Añade al menos una pregunta propia para que la IA tenga un ejemplo, o escribe una temática si quieres que lo cree todo automáticamente.");
+        return;
+      }
+
+      if (!requestedCount) {
+        showNotice("customTrivialNotice", "Escribe un número de preguntas entre 1 y 50.");
+        return;
+      }
+
+      if (missing <= 0) {
+        showNotice("customTrivialNotice", `Ya tienes ${currentQuestions.length} preguntas. No hace falta completar con IA.`);
+        return;
+      }
+
+      const btn = $("completeCustomWithAiBtn");
+      const oldText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Generando con IA...";
+      showNotice("customTrivialNotice", currentQuestions.length
+        ? `La IA está creando ${missing} pregunta${missing === 1 ? "" : "s"} más usando tus preguntas como ejemplo...`
+        : `La IA está creando ${missing} pregunta${missing === 1 ? "" : "s"} más...`);
+
+      try {
+        const aiQuestions = await generateQuestionsWithoutRepeats({
+          topic: buildAiCompletionTopic(topic, currentQuestions),
+          questionCount: missing + Math.min(6, currentQuestions.length),
+          level: "Primaria",
+          language: "es"
+        });
+
+        const combined = removeRepeatedQuestions([...currentQuestions, ...aiQuestions]).slice(0, requestedCount);
+        customQuestionsDraft = combined.map(q => ({
+          question: q.question,
+          options: q.options,
+          correctIndex: q.correctIndex,
+          source: q.source || "ia"
+        }));
+
+        renderCustomQuestionBuilder();
+        const added = Math.max(0, customQuestionsDraft.length - currentQuestions.length);
+        showNotice("customTrivialNotice", added
+          ? `IA completada: se han añadido ${added} pregunta${added === 1 ? "" : "s"}. Guarda la configuración antes de empezar.`
+          : "La IA no ha devuelto preguntas nuevas sin repetir. Prueba con una temática más concreta.");
+      } catch (error) {
+        console.error(error);
+        showNotice("customTrivialNotice", "No se ha podido completar con IA. Revisa la Firebase Function generateQuestions.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = oldText;
+      }
+    }
+
+    function removeCustomQuestion(index) {
+      customQuestionsDraft.splice(index, 1);
+      renderCustomQuestionBuilder();
+      showNotice("customTrivialNotice", "Pregunta eliminada. Guarda la configuración para aplicar el cambio.");
+    }
+
+    function sanitizeQuestionsForStorage(input) {
+      if (!Array.isArray(input)) return [];
+
+      return input
+        .map(q => {
+          const question = String(q.question || q.pregunta || "").trim();
+          const rawOptions = Array.isArray(q.options) ? q.options : q.opciones;
+          let correctIndex = Number.isInteger(q.correctIndex) ? q.correctIndex : q.indiceCorrecto;
+
+          if (!Array.isArray(rawOptions) || rawOptions.length !== 4) return null;
+          const options = rawOptions.map(option => String(option).trim()).slice(0, 4);
+          if (!Number.isInteger(correctIndex)) {
+            const correctText = q.correct || q.correcta;
+            correctIndex = options.findIndex(option => normalizeTextForComparison(option) === normalizeTextForComparison(correctText));
+          }
+
+          if (!question || options.some(option => !option) || correctIndex < 0 || correctIndex > 3) return null;
+
+          return {
+            question,
+            options,
+            correctIndex,
+            source: q.source === "ia" ? "ia" : "manual"
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function renderCustomQuestionBuilder() {
+      updateTopicFieldVisibility();
+      const counter = $("customQuestionCounter");
+      const list = $("customQuestionList");
+      if (!counter || !list) return;
+
+      const target = getRequestedQuestionCount() || Number(room?.questionCount || 10);
+      const total = customQuestionsDraft.length;
+      const missing = Math.max(0, target - total);
+      counter.textContent = `${total} pregunta${total === 1 ? "" : "s"} creada${total === 1 ? "" : "s"} · objetivo: ${target}${missing ? ` · faltan ${missing}` : ""}`;
+
+      list.innerHTML = "";
+      if (!total) {
+        list.innerHTML = `<div class="custom-question-item"><strong>Todavía no hay preguntas propias.</strong><br>Usa el formulario de arriba para añadir la primera.</div>`;
+        return;
+      }
+
+      customQuestionsDraft.forEach((q, index) => {
+        const item = document.createElement("div");
+        item.className = "custom-question-item";
+        const sourceLabel = q.source === "ia" ? "IA" : "Propia";
+        item.innerHTML = `
+          <div class="custom-question-head">
+            <span>${index + 1}. ${escapeHtml(q.question)}</span>
+            <span class="custom-source-badge">${sourceLabel}</span>
+          </div>
+          <ul class="custom-options-preview">
+            ${q.options.map((option, optionIndex) => `
+              <li class="${optionIndex === q.correctIndex ? "correct-preview" : ""}">
+                ${letter(optionIndex)}. ${escapeHtml(option)}${optionIndex === q.correctIndex ? " ✅" : ""}
+              </li>`).join("")}
+          </ul>
+          <div class="custom-question-footer">
+            <button class="btn danger small" type="button" data-remove-custom-question="${index}">Eliminar</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+
+      list.querySelectorAll("[data-remove-custom-question]").forEach(btn => {
+        btn.addEventListener("click", () => removeCustomQuestion(Number(btn.dataset.removeCustomQuestion)));
+      });
+    }
+
     /************************************************************
      * JUEGO
      ************************************************************/
@@ -2155,7 +3083,7 @@
 
       const total = questions.length;
       $("questionNumber").textContent = `Pregunta ${index + 1}/${total}`;
-      $("topicBadge").textContent = room.topic || "Trivial";
+      $("topicBadge").textContent = getRoomTopicLabel();
       $("questionText").textContent = question.question;
 
       const isTeacherObserver = Boolean(isHost || myPlayer?.isTeacher);
@@ -2372,8 +3300,7 @@
 
         if (isHost) {
           showScreen("setup");
-          $("topicInput").value = room.topic || "";
-          $("questionCount").value = String(room.questionCount || 10);
+          syncSetupFormFromRoom();
         } else {
           showScreen("waiting");
           $("waitingText").textContent = room.hostId ? "El profesor está eligiendo la temática." : "Esperando a que el profesor inicie sesión y cree la partida.";
@@ -2384,7 +3311,9 @@
         stopHostMusic();
         clearAutoAdvance();
         showScreen("waiting");
-        $("waitingText").textContent = `Tema: ${room.topic || "sin tema"}`;
+        const customCount = Array.isArray(room.customQuestions) ? room.customQuestions.length : 0;
+        const aiText = customCount && room.completeWithAi !== false ? " · completando con IA si falta" : "";
+        $("waitingText").textContent = `${customCount ? "Trivial propio" : "Tema: " + (room.topic || "sin tema")} · ${room.questionCount || 10} preguntas${customCount ? ` · ${customCount} propias${aiText}` : ""}`;
         $("startGameBtn").classList.toggle("hidden", !isHost);
       }
 
@@ -2393,7 +3322,7 @@
       }
 
       if (room.status === "playing") {
-        if (isHost) startHostMusic();
+        startHostMusic();
         showScreen("game");
         renderGame();
       }
@@ -2447,7 +3376,7 @@
       const labels = {
         setup: "Configurando partida",
         waiting: "Esperando jugadores",
-        loading: "Generando preguntas",
+        loading: "Preparando preguntas",
         playing: "Partida en marcha",
         finished: "Partida terminada"
       };
@@ -2787,11 +3716,26 @@
     /************************************************************
      * AUDIO
      ************************************************************/
-    function startHostMusic() {
-      if (!isHost) return;
+    function startHostMusic(forceFile = null) {
+      // Aunque el nombre histórico sea hostMusic, ahora la música de fondo
+      // se reproduce también en los dispositivos de los alumnos.
+      // El profesor decide el archivo y lo guarda en room.bgMusicFile;
+      // los alumnos solo leen ese mismo archivo para que todos escuchen lo mismo.
+      const desired = forceFile || room?.bgMusicFile || currentHostMusicFile || null;
+
+      if (desired) {
+        setHostMusicSource(desired);
+      } else if (isHost) {
+        // Fallback solo para el profesor si por alguna razón aún no hay archivo guardado.
+        setHostMusicSource(getNextHostMusicFile());
+      } else {
+        // Si un alumno aún no ha recibido bgMusicFile desde Firestore, esperamos.
+        return;
+      }
 
       hostMusic.play().catch(() => {
         // Algunos navegadores bloquean audio hasta que haya interacción directa.
+        // En alumnos normalmente ya habrá interacción previa al entrar o responder.
       });
     }
 
@@ -2950,6 +3894,8 @@
       cleanupScheduled = false;
       winnerCelebrationShownFor = "";
       loserEncouragementShownFor = "";
+      customQuestionsDraft = [];
+      lastSetupRoomSyncKey = "";
 
       const deletes = players.map(p => deleteDoc(doc(playersRef, p.id)));
       await Promise.all(deletes);
@@ -2968,10 +3914,13 @@
         status: "setup",
         topic: "",
         questionCount: 10,
+        customQuestions: [],
+        completeWithAi: true,
         questions: [],
         currentQuestion: 0,
         hostId: "",
         generationId: "",
+        bgMusicFile: "",
         winnerId: "",
         winnerName: "",
         winnerScore: 0,
