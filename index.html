@@ -1394,6 +1394,46 @@
     }
 
 
+    .voice-toggle-panel {
+      margin: 18px 0 20px;
+      padding: 18px 20px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #eef2ff, #ecfeff 62%, #fef9c3);
+      border: 4px solid rgba(255,255,255,0.86);
+      box-shadow: inset 0 0 0 3px rgba(59,130,246,0.12), 0 12px 24px rgba(0,0,0,0.10);
+    }
+
+    .voice-toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 0;
+      cursor: pointer;
+      color: #1e3a8a;
+      font-size: clamp(18px, 2.4vw, 26px);
+      font-weight: 1000;
+      line-height: 1.15;
+    }
+
+    .voice-toggle-label input[type="checkbox"] {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      padding: 0;
+      border-radius: 10px;
+      accent-color: #3b82f6;
+      cursor: pointer;
+    }
+
+    .voice-toggle-hint {
+      margin-top: 10px;
+      color: #475569;
+      font-size: 15px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+
     .setup-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1798,6 +1838,18 @@
             </div>
           </div>
 
+
+
+          <div class="voice-toggle-panel" id="questionVoicePanel">
+            <label class="voice-toggle-label" for="questionVoiceEnabled">
+              <input id="questionVoiceEnabled" type="checkbox" checked />
+              <span>Leer cada pregunta en voz alta antes de responder 🔊</span>
+            </label>
+            <div class="voice-toggle-hint">
+              Activado: el profesor lee la pregunta y los alumnos esperan hasta que termina la voz. Desactivado: los alumnos pueden responder desde que aparece la pregunta.
+            </div>
+          </div>
+
           <div class="notice hidden" id="ownTrivialTopicNotice">
             ✍️ Modo trivial propio activo: no necesitas escribir temática. Si completas con IA, usará tus preguntas como ejemplo de estilo, nivel y contenido.
           </div>
@@ -2067,11 +2119,10 @@
     const unlockedQuestionSpeechKeys = new Set();
 
     /************************************************************
-     * MÚSICA DE FONDO (PROFESOR Y ALUMNOS)
+     * MÚSICA DE FONDO (SOLO PROFESOR)
      * - Archivos esperados: music1.mp3 ... music18.mp3
-     * - El profesor elige uno al azar al iniciar y lo guarda en Firestore.
-     * - Profesor y alumnos reproducen ese mismo archivo desde la pantalla de carga,
-     *   mientras se preparan las preguntas.
+     * - El profesor elige uno al azar al iniciar la partida.
+     * - Los alumnos no reproducen música ni sonidos desde su dispositivo.
      ************************************************************/
     const HOST_MUSIC_TOTAL = 18;
     const HOST_MUSIC_STORAGE_KEY = "trivial_host_music_bag_v1";
@@ -2655,6 +2706,7 @@
       const questionCount = getRequestedQuestionCount();
       const customQuestions = sanitizeQuestionsForStorage(customQuestionsDraft);
       const completeWithAi = $("completeWithAi")?.checked !== false;
+      const questionVoiceEnabled = $("questionVoiceEnabled")?.checked !== false;
       const hasCustomQuestions = customQuestions.length > 0;
       const topic = hasCustomQuestions ? topicInputValue : topicInputValue;
 
@@ -2681,6 +2733,7 @@
         questionCount,
         customQuestions,
         completeWithAi,
+        questionVoiceEnabled,
         status: "waiting",
         questions: [],
         currentQuestion: 0,
@@ -2716,6 +2769,7 @@
 
       const generationId = makeId();
       const bgMusicFile = getNextHostMusicFile();
+      const questionVoiceEnabled = room.questionVoiceEnabled !== false;
 
       try {
         startHostMusic(bgMusicFile);
@@ -2751,9 +2805,9 @@
           status: "playing",
           questions,
           currentQuestion: 0,
-          questionReading: true,
-          questionReadKey: makeQuestionReadKey(generationId, 0),
-          questionStartedAt: null,
+          questionReading: questionVoiceEnabled,
+          questionReadKey: questionVoiceEnabled ? makeQuestionReadKey(generationId, 0) : "",
+          questionStartedAt: questionVoiceEnabled ? null : serverTimestamp(),
           updatedAt: serverTimestamp()
         });
       } catch (error) {
@@ -2873,7 +2927,7 @@
     function syncSetupFormFromRoom() {
       if (!room) return;
       const updatedKey = room.updatedAt?.seconds || room.createdAt?.seconds || "sin-fecha";
-      const syncKey = `${roomCode}_${room.status}_${updatedKey}_${room.customQuestions?.length || 0}`;
+      const syncKey = `${roomCode}_${room.status}_${updatedKey}_${room.customQuestions?.length || 0}_${room.questionVoiceEnabled !== false}`;
       if (lastSetupRoomSyncKey === syncKey) return;
 
       lastSetupRoomSyncKey = syncKey;
@@ -2881,6 +2935,7 @@
       $("questionCount").value = String(room.questionCount || 10);
       customQuestionsDraft = sanitizeQuestionsForStorage(room.customQuestions || []);
       if ($("completeWithAi")) $("completeWithAi").checked = room.completeWithAi !== false;
+      if ($("questionVoiceEnabled")) $("questionVoiceEnabled").checked = room.questionVoiceEnabled !== false;
       renderCustomQuestionBuilder();
       updateTopicFieldVisibility();
     }
@@ -3236,11 +3291,12 @@
           updatedAt: serverTimestamp()
         });
       } else {
+        const questionVoiceEnabled = room.questionVoiceEnabled !== false;
         await updateDoc(roomRef, {
           currentQuestion: next,
-          questionReading: true,
-          questionReadKey: makeQuestionReadKey(room.generationId || "game", next),
-          questionStartedAt: null,
+          questionReading: questionVoiceEnabled,
+          questionReadKey: questionVoiceEnabled ? makeQuestionReadKey(room.generationId || "game", next) : "",
+          questionStartedAt: questionVoiceEnabled ? null : serverTimestamp(),
           updatedAt: serverTimestamp()
         });
       }
@@ -3360,13 +3416,14 @@
         showScreen("waiting");
         const customCount = Array.isArray(room.customQuestions) ? room.customQuestions.length : 0;
         const aiText = customCount && room.completeWithAi !== false ? " · completando con IA si falta" : "";
-        $("waitingText").textContent = `${customCount ? "Trivial propio" : "Tema: " + (room.topic || "sin tema")} · ${room.questionCount || 10} preguntas${customCount ? ` · ${customCount} propias${aiText}` : ""}`;
+        const voiceText = room.questionVoiceEnabled === false ? " · voz desactivada" : " · voz activada";
+        $("waitingText").textContent = `${customCount ? "Trivial propio" : "Tema: " + (room.topic || "sin tema")} · ${room.questionCount || 10} preguntas${customCount ? ` · ${customCount} propias${aiText}` : ""}${voiceText}`;
         $("startGameBtn").classList.toggle("hidden", !isHost);
       }
 
       if (room.status === "loading") {
         // La música empieza ya mientras se preparan las preguntas,
-        // también en los ordenadores de los alumnos.
+        // pero solo en el dispositivo del profesor.
         startHostMusic();
         showScreen("loading");
       }
@@ -3779,11 +3836,13 @@
 
     function isQuestionLockedForAnswering() {
       if (!room || room.status !== "playing") return false;
+      if (room.questionVoiceEnabled === false) return false;
       return room.questionReading === true || !room.questionStartedAt?.toMillis;
     }
 
     function handleTeacherQuestionSpeech(question, index) {
       if (!isHost || !roomRef || !question?.question) return;
+      if (room.questionVoiceEnabled === false) return;
       if (room.status !== "playing" || room.questionReading !== true) return;
 
       const readKey = room.questionReadKey || makeQuestionReadKey(room.generationId || "game", index);
@@ -3888,25 +3947,18 @@
     }
 
     function startHostMusic(forceFile = null) {
-      // Aunque el nombre histórico sea hostMusic, ahora la música de fondo
-      // se reproduce también en los dispositivos de los alumnos.
-      // El profesor decide el archivo y lo guarda en room.bgMusicFile;
-      // los alumnos solo leen ese mismo archivo para que todos escuchen lo mismo.
-      const desired = forceFile || room?.bgMusicFile || currentHostMusicFile || null;
-
-      if (desired) {
-        setHostMusicSource(desired);
-      } else if (isHost) {
-        // Fallback solo para el profesor si por alguna razón aún no hay archivo guardado.
-        setHostMusicSource(getNextHostMusicFile());
-      } else {
-        // Si un alumno aún no ha recibido bgMusicFile desde Firestore, esperamos.
+      // La música de fondo solo debe sonar en la pantalla/dispositivo del profesor.
+      if (!isHost) {
+        hostMusic.pause();
+        hostMusic.currentTime = 0;
         return;
       }
 
+      const desired = forceFile || room?.bgMusicFile || currentHostMusicFile || getNextHostMusicFile();
+      setHostMusicSource(desired);
+
       hostMusic.play().catch(() => {
         // Algunos navegadores bloquean audio hasta que haya interacción directa.
-        // En alumnos normalmente ya habrá interacción previa al entrar o responder.
       });
     }
 
@@ -3917,6 +3969,9 @@
     }
 
     function playWinnerMusic() {
+      // La música de victoria también queda limitada al profesor.
+      if (!isHost) return;
+
       winnerMusic.currentTime = 0;
       winnerMusic.play().catch(() => {
         // Si el navegador bloquea el audio, la animación seguirá funcionando.
@@ -3964,6 +4019,9 @@
     }
 
     function playAnswerSound(correct) {
+      // Evitamos cualquier sonido en los dispositivos de los alumnos.
+      if (!isHost) return;
+
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const ctx = new AudioContext();
@@ -4091,6 +4149,7 @@
         questionCount: 10,
         customQuestions: [],
         completeWithAi: true,
+        questionVoiceEnabled: true,
         questions: [],
         currentQuestion: 0,
         questionReading: false,
