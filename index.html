@@ -2035,7 +2035,8 @@
     const QUESTION_SPEECH_FALLBACK_MS = 30000;
     const FINISHED_CLEANUP_DELAY_MS = 30000;
     const AUTO_NEXT_DELAY_MS = 1500;
-    const ALLOWED_HOST_EMAIL = "rafgim36@gmail.com";
+    const ADMIN_EMAIL = "rafgim36@gmail.com";
+    const AUTHORIZED_HOSTS_COLLECTION = "trivialAuthorizedHosts";
 
     /************************************************************
      * IMPORTS DE FIREBASE
@@ -2244,7 +2245,7 @@
 
       onAuthStateChanged(auth, async (user) => {
         currentUser = user;
-        isAllowedHostAccount = Boolean(user?.email && user.email.toLowerCase() === ALLOWED_HOST_EMAIL.toLowerCase());
+        isAllowedHostAccount = await checkAllowedHostAccount(user);
         updateHostAuthBox();
         updateRoomAccessButtons();
         await claimHostIfAllowed();
@@ -2601,6 +2602,22 @@
       };
     }
 
+    async function checkAllowedHostAccount(user) {
+      const email = String(user?.email || "").trim().toLowerCase();
+      if (!email) return false;
+
+      // La cuenta administradora siempre puede crear partidas.
+      if (email === ADMIN_EMAIL.toLowerCase()) return true;
+
+      try {
+        const snap = await getDoc(doc(db, AUTHORIZED_HOSTS_COLLECTION, email));
+        return snap.exists() && snap.data()?.enabled !== false;
+      } catch (error) {
+        console.error("No se ha podido comprobar si la cuenta está autorizada:", error);
+        return false;
+      }
+    }
+
     function updateHostAuthBox() {
       const status = $("hostAuthStatus");
       const loginBtn = $("teacherLoginBtn");
@@ -2619,7 +2636,7 @@
         loginBtn.classList.add("hidden");
         logoutBtn.classList.remove("hidden");
       } else {
-        status.textContent = `Cuenta no autorizada: ${currentUser.email}. Solo ${ALLOWED_HOST_EMAIL} puede crear partidas.`;
+        status.textContent = `Cuenta no autorizada: ${currentUser.email}. Pide al administrador que la añada desde autorizar_cuentas_gmail.html.`;
         loginBtn.classList.add("hidden");
         logoutBtn.classList.remove("hidden");
       }
