@@ -3531,6 +3531,14 @@
         // no se reasigna la copa al siguiente jugador del ranking.
         const finalWinner = getCurrentWinner();
 
+        // Importante: en el profesor lanzamos la fanfarria aquí, justo dentro
+        // del clic en "Ver resultados" y antes del await de Firestore. Si se
+        // espera al onSnapshot, algunos navegadores bloquean el audio porque
+        // ya no lo consideran una acción directa del usuario.
+        if (finalWinner) {
+          playWinnerMusicForHost(finalWinner);
+        }
+
         await updateDoc(roomRef, {
           status: "finished",
           generationId: "",
@@ -3701,7 +3709,10 @@
         renderFinalRanking();
 
         if (isHost) {
-          hideWinnerCelebration();
+          // En la pantalla del profesor no mostramos el overlay individual,
+          // pero NO usamos hideWinnerCelebration(), porque esa función también
+          // para la fanfarria. Solo ocultamos la capa visual.
+          $("winnerOverlay").classList.add("hidden");
           hideLoserEncouragement();
           if (winner) {
             playWinnerMusicForHost(winner);
@@ -4314,7 +4325,7 @@
 
     function canPlayWinnerMusicHere() {
       // En alumnos, la fanfarria solo suena en el dispositivo del ganador.
-      // En el profesor, también debe sonar al terminar la partida.
+      // En el profesor, también puede sonar al terminar la partida.
       const winner = getStoredWinner();
       if (!winner?.id) return false;
       if (isHost) return true;
@@ -4324,8 +4335,13 @@
     function playWinnerMusic({ force = false } = {}) {
       if (!force && !canPlayWinnerMusicHere()) return;
 
-      winnerMusic.currentTime = 0;
-      winnerMusic.play().catch(() => {
+      try {
+        winnerMusic.pause();
+        winnerMusic.currentTime = 0;
+      } catch (_) {}
+
+      return winnerMusic.play().catch((error) => {
+        console.warn("No se ha podido reproducir la fanfarria de ganador:", error);
         // Si el navegador bloquea el audio, la animación seguirá funcionando.
       });
     }
@@ -4338,11 +4354,16 @@
     function playWinnerMusicForHost(winner) {
       if (!isHost || !winner?.id) return;
 
-      // Usamos una clave estable para que la fanfarria del profesor no se reinicie
-      // si Firestore vuelve a renderizar la pantalla de resultados.
+      // Clave estable para no reiniciar la fanfarria cada vez que Firestore
+      // vuelva a renderizar la pantalla final.
       const key = `${roomCode || "sala"}_${winner.id}_${room?.winnerScore ?? winner.score ?? 0}`;
       if (hostWinnerMusicShownFor === key) return;
       hostWinnerMusicShownFor = key;
+
+      // force:true evita el bloqueo lógico de "solo alumno ganador".
+      // Además, cuando se llama desde nextQuestion(), ocurre dentro del clic
+      // del profesor en "Ver resultados", que es lo que mejor respeta las
+      // políticas de audio de los navegadores.
       playWinnerMusic({ force: true });
     }
 
