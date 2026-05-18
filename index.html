@@ -2183,11 +2183,11 @@
     const unlockedQuestionSpeechKeys = new Set();
 
     /************************************************************
-     * MÚSICA DE FONDO (PROFESOR Y ALUMNOS)
+     * MÚSICA DE FONDO (SOLO PROFESOR)
      * - Archivos esperados: music1.mp3 ... music18.mp3
      * - El profesor elige uno al azar al iniciar la partida.
-     * - El archivo elegido se guarda en bgMusicFile para que alumnos y profesor
-     *   reproduzcan la misma música ambiente desde loading/playing.
+     * - El archivo elegido se guarda en bgMusicFile, pero solo lo reproduce
+     *   el dispositivo del profesor. Los alumnos no escuchan música ambiente.
      * - En móviles, el navegador puede exigir una pulsación previa para activar audio.
      ************************************************************/
     const HOST_MUSIC_TOTAL = 18;
@@ -2677,13 +2677,20 @@
       };
     }
 
+    function isAdminUnlimitedAccount(user = currentUser) {
+      const email = String(user?.email || "").trim().toLowerCase();
+      return email === ADMIN_EMAIL.toLowerCase();
+    }
+
     function updateCreditsBox() {
       const box = $("creditsBox");
       const text = $("creditsText");
       const freeText = $("creditsFreeText");
       if (!box || !text || !freeText) return;
 
-      const shouldShow = Boolean(currentUser && isAllowedHostAccount);
+      // La cuenta administradora tiene partidas ilimitadas: no tiene sentido
+      // mostrarle contador ni botón de compra.
+      const shouldShow = Boolean(currentUser && isAllowedHostAccount && !isAdminUnlimitedAccount());
       box.classList.toggle("hidden", !shouldShow);
 
       if (!shouldShow) return;
@@ -2846,7 +2853,7 @@
 
       const canCreateRoom = Boolean(isAllowedHostAccount);
       const creditsInfo = getCreditsInfo();
-      const hasCredits = creditsInfo.total > 0;
+      const hasCredits = isAdminUnlimitedAccount() || creditsInfo.total > 0;
 
       // Profesor autorizado: solo ve Crear sala nueva.
       // Alumnos/no autorizados: solo ven campo de código + Entrar en sala.
@@ -2991,7 +2998,7 @@
       }
 
       const creditsInfo = getCreditsInfo();
-      if (creditsInfo.total <= 0) {
+      if (!isAdminUnlimitedAccount() && creditsInfo.total <= 0) {
         alert("No te quedan partidas disponibles. Compra un pack para poder generar más trivials.");
         return;
       }
